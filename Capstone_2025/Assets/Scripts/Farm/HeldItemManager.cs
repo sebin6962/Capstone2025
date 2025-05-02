@@ -32,7 +32,7 @@ public class HeldItemManager : MonoBehaviour
             Vector3 screenPos = Camera.main.WorldToScreenPoint(player.position + offset); // 선언과 초기화 동시에
             heldItemImage.transform.position = screenPos;
 
-            Debug.Log("HeldItemImage 위치: " + screenPos);
+            //Debug.Log("HeldItemImage 위치: " + screenPos);
         }
     }
 

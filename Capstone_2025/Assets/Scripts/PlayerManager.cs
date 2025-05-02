@@ -25,6 +25,13 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // 인벤토리 열려 있으면 움직임 차단
+        if (GameManager.Instance.inventoryPanel.activeSelf)
+        {
+            movement = Vector2.zero;
+            return;
+        }
+
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");//입력감지
 
