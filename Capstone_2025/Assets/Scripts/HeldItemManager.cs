@@ -1,0 +1,49 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HeldItemManager : MonoBehaviour
+{
+    public static HeldItemManager Instance;
+
+    public Image heldItemImage; // UI Image 오브젝트 (플레이어 머리 위)
+    public Transform player;    // 플레이어 Transform
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
+
+    private void LateUpdate()
+    {
+        // 플레이어 위에 따라다니게 위치 업데이트
+        if (heldItemImage.enabled)
+        {
+            Vector3 offset = new Vector3(0, 1.5f, 0); // 머리 위 위치
+            heldItemImage.transform.position = Camera.main.WorldToScreenPoint(player.position + offset);
+        }
+    }
+
+    public void ShowHeldItem(Sprite sprite)
+    {
+        if (sprite == null)
+        {
+            Debug.LogWarning("ShowHeldItem: 스프라이트가 null입니다!");
+            return;
+        }
+        if (heldItemImage == null)
+        {
+            Debug.LogError("heldItemImage가 연결되지 않았습니다! Inspector에서 Image를 드래그해 연결하세요.");
+            return;
+        }
+        heldItemImage.sprite = sprite;
+        heldItemImage.enabled = true;
+        Debug.Log("ShowHeldItem: 아이템 표시됨 - " + sprite.name);
+    }
+
+    public void HideHeldItem()
+    {
+        heldItemImage.enabled = false;
+    }
+}
