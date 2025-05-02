@@ -3642,7 +3642,7 @@ GameObject:
   - component: {fileID: 1245514034}
   m_Layer: 5
   m_Name: HeldItemCanvas
-  m_TagString: Untagged
+  m_TagString: UI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3696,7 +3696,7 @@ Canvas:
   m_GameObject: {fileID: 1245514033}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 2130387757}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
