@@ -35,6 +35,8 @@ public class InventoryManager : MonoBehaviour
         return IsHoldingTool("wateringCan");
     }
 
+
+
     public void HoldItem(GameObject item)
     {
         heldItem = item;
@@ -118,6 +120,11 @@ public class InventoryManager : MonoBehaviour
     public bool IsHoldingItem()
     {
         return heldSprite != null;
+    }
+
+    public string GetHeldItemName()
+    {
+        return heldItemName;
     }
 
     [System.Serializable]

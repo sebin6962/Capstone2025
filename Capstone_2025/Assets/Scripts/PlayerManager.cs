@@ -25,13 +25,6 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // 인벤토리 열려 있으면 움직임 차단
-        if (GameManager.Instance.inventoryPanel.activeSelf)
-        {
-            movement = Vector2.zero;
-            return;
-        }
-
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");//입력감지
 
@@ -53,37 +46,41 @@ public class PlayerManager : MonoBehaviour
         }
 
         //밭에 물주기
-        if (Input.GetMouseButtonDown(0) && InventoryManager.Instance.IsHoldingWateringCan())
+        if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPos.z = 0f;
-
-            Vector3Int clickedCell = farmManager.fieldTilemap.WorldToCell(mouseWorldPos);
-            Vector3Int playerCell = farmManager.fieldTilemap.WorldToCell(transform.position);
-
-            int dx = Mathf.Abs(clickedCell.x - playerCell.x);
-            int dy = Mathf.Abs(clickedCell.y - playerCell.y);
-
-            if (dx <= 1 && dy <= 1) // 주변 한 칸 이내
+            if (InventoryManager.Instance.IsHoldingWateringCan() &&
+                TryGetClickedFarmTile(out var pos1, out _))
             {
-                if (farmManager.IsFarmTile(mouseWorldPos))
-                {
-                    farmManager.WaterSoil(mouseWorldPos);
-                    Debug.Log("물 뿌리기 완료 (거리 허용됨)");
-                }
-                else
-                {
-                    Debug.Log("여기는 밭이 아닙니다.");
-                }
+                farmManager.WaterSoil(pos1);
+                Debug.Log("물 뿌리기 완료");
+            }
+            else if (InventoryManager.Instance.IsHoldingItem() &&
+                     InventoryManager.Instance.GetHeldItemName() == "seedBag" &&
+                     TryGetClickedFarmTile(out var pos2, out _))
+            {
+                farmManager.PlantSeed(pos2);
+                Debug.Log("씨앗 뿌리기 완료");
             }
             else
             {
-                Debug.Log("너무 멀어서 물을 줄 수 없습니다.");
+                Debug.Log("너무 멀거나 밭이 아닙니다. 물이나 씨앗을 사용할 수 없습니다.");
             }
         }
-
     }
 
+    private bool TryGetClickedFarmTile(out Vector3 worldPos, out Vector3Int clickedCell)
+    {
+        worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        worldPos.z = 0f;
+
+        clickedCell = farmManager.fieldTilemap.WorldToCell(worldPos);
+        Vector3Int playerCell = farmManager.fieldTilemap.WorldToCell(transform.position);
+
+        int dx = Mathf.Abs(clickedCell.x - playerCell.x);
+        int dy = Mathf.Abs(clickedCell.y - playerCell.y);
+
+        return dx <= 1 && dy <= 1 && farmManager.IsFarmTile(worldPos);
+    }
     void FixedUpdate()
     {
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);

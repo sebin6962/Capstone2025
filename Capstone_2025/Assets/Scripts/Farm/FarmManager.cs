@@ -8,6 +8,8 @@ public class FarmManager : MonoBehaviour
     public Tilemap overlayTilemap; //상태 변화 시 겹쳐질 Tilemap
     public TileBase farmTile;  // 밭으로 간주할 타일 (FarmSoilTile.asset) // 마른 흙 타일
     public TileBase wetSoilTile; // 젖은 흙 타일
+    public Tilemap seedOverlayTilemap;   // 씨앗 타일 전용
+    public TileBase seedTile;           // 씨앗 스프라이트 타일 (ex: seedTile.asset)
 
     private HashSet<Vector3Int> farmPositions = new HashSet<Vector3Int>();
 
@@ -63,6 +65,16 @@ public class FarmManager : MonoBehaviour
         if (IsFarmTile(worldPos))
         {
             overlayTilemap.SetTile(cellPos, wetSoilTile);
+        }
+    }
+
+    public void PlantSeed(Vector3 worldPos)
+    {
+        Vector3Int cellPos = fieldTilemap.WorldToCell(worldPos);
+
+        if (IsFarmTile(worldPos))
+        {
+            seedOverlayTilemap.SetTile(cellPos, seedTile);
         }
     }
 }
