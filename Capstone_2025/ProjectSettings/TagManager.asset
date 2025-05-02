@@ -7,6 +7,8 @@ TagManager:
   - Box
   - Item
   - UI
+  - Map
+  - Tool
   layers:
   - Default
   - TransparentFX
@@ -17,7 +19,7 @@ TagManager:
   - Item
   - Box
   - Player
-  - 
+  - Tool
   - 
   - 
   - 
@@ -43,4 +45,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Map
+    uniqueID: 3105236941
+    locked: 0
+  - name: Ground
+    uniqueID: 3342375265
+    locked: 0
+  - name: Obj
+    uniqueID: 1378311581
+    locked: 0
+  - name: UI
+    uniqueID: 994475557
     locked: 0

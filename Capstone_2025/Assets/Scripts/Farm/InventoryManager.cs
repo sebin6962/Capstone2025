@@ -13,10 +13,26 @@ public class InventoryManager : MonoBehaviour
     private Sprite heldSprite;
     private string heldItemName;
 
+
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
+
+
+    public bool IsHoldingTool(string toolName)
+    {
+        return heldItemName != null &&
+               ToolData.Instance != null &&
+               ToolData.Instance.IsTool(heldItemName) &&
+               heldItemName == toolName;
+    }
+
+    public bool IsHoldingWateringCan() //플레이어가 든 도구가 물뿌리개임을 확인
+    {
+        return IsHoldingTool("wateringCan");
     }
 
     public void HoldItem(GameObject item)
