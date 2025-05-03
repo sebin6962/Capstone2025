@@ -23,7 +23,7 @@ public class WateringCanAnchor : MonoBehaviour
 
     void Update()
     {
-        if (isPlayerNearby && Input.GetKeyDown(KeyCode.Space))
+        if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
         {
             if (!BoxInventoryManager.Instance.IsHoldingItem())
             {
@@ -34,7 +34,7 @@ public class WateringCanAnchor : MonoBehaviour
             }
         }
 
-        if (isPlayerNearby && Input.GetKeyDown(KeyCode.R))
+        if (isPlayerNearby && Input.GetKeyDown(KeyCode.Space))
         {
             if (BoxInventoryManager.Instance.IsHoldingWateringCan())
             {

@@ -25,6 +25,14 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (BoxInventoryManager.Instance.IsHoldingItem())
+            {
+                BoxInventoryManager.Instance.TryAutoStoreHeldItem();
+            }
+        }
+
         if (GameManager.Instance != null && GameManager.Instance.IsInventoryOpen())
         {
             movement = Vector2.zero;

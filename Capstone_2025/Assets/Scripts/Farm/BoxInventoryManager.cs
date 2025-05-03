@@ -197,6 +197,46 @@ public class BoxInventoryManager : MonoBehaviour
         Debug.Log($"[분리] 슬롯에서 {itemName} 1개만 손에 듬");
     }
 
+    public void TryAutoStoreHeldItem()
+    {
+        if (heldSprite == null || string.IsNullOrEmpty(heldItemName))
+            return;
+
+        if (ToolData.Instance.IsTool(heldItemName))
+        {
+            Debug.Log("도구는 자동 저장할 수 없습니다: " + heldItemName);
+            return;
+        }
+
+        // 기존 슬롯에 있는 경우 수량 +1
+        foreach (var slot in slots)
+        {
+            if (slot.HasItem() && slot.GetItemName() == heldItemName)
+            {
+                slot.SetItem(slot.GetSprite(), heldItemName, slot.GetItemCount() + 1);
+                RemoveHeldItem();
+                SaveInventory();
+                Debug.Log("자동 저장: 기존 슬롯에 추가됨");
+                return;
+            }
+        }
+
+        // 비어있는 슬롯에 새로 저장
+        foreach (var slot in slots)
+        {
+            if (!slot.HasItem())
+            {
+                slot.SetItem(heldSprite, heldItemName, 1);
+                RemoveHeldItem();
+                SaveInventory();
+                Debug.Log("자동 저장: 새 슬롯에 저장됨");
+                return;
+            }
+        }
+
+        Debug.Log("상자 가득 참: 저장 실패");
+    }
+
     [System.Serializable]
     public class InventorySlotData
     {
