@@ -69,7 +69,7 @@ public class PlayerSceneTrigger : MonoBehaviour
         if (isInTrigger && Input.GetKeyDown(KeyCode.W))
         {
             Debug.Log("상호작용: W키 누름 → 씬 전환 중");
-            FadeManager.Instance.FadeToScene(targetScene, 1f); // 2초 후 씬 전환
+            FadeManager.Instance.FadeToScene(targetScene, 0.5f); // 2초 후 씬 전환
         }
     }
 }

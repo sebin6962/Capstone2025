@@ -18,7 +18,7 @@ public class FadeManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void FadeToScene(string sceneName, float delay = 2f)
+    public void FadeToScene(string sceneName, float delay = 1f)
     {
         StartCoroutine(FadeRoutine(sceneName, delay));
     }
@@ -26,9 +26,17 @@ public class FadeManager : MonoBehaviour
     private IEnumerator FadeRoutine(string sceneName, float delay)
     {
         yield return StartCoroutine(FadeOut());
+
+        //씬 로드 전에 확실히 검정 유지
+        var color = fadeImage.color;
+        color.a = 1f;
+        fadeImage.color = color;
+
         yield return new WaitForSeconds(delay);
+
         SceneManager.LoadScene(sceneName);
         yield return new WaitForSeconds(0.1f); // 씬 로드 후 한 프레임 대기
+
         yield return StartCoroutine(FadeIn());
     }
 
@@ -47,6 +55,9 @@ public class FadeManager : MonoBehaviour
 
     public IEnumerator FadeIn()
     {
+        //알파 초기화
+        fadeImage.color = new Color(0, 0, 0, 1);
+
         float t = 0;
         Color color = fadeImage.color;
         while (t < fadeDuration)
