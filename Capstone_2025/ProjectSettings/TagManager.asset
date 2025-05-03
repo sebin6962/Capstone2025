@@ -52,6 +52,9 @@ TagManager:
   - name: Ground
     uniqueID: 3342375265
     locked: 0
+  - name: Crop
+    uniqueID: 51656831
+    locked: 0
   - name: Obj
     uniqueID: 1378311581
     locked: 0
