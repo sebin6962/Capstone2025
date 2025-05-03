@@ -17,7 +17,7 @@ public class HeldItemManager : MonoBehaviour
 
     private void LateUpdate()
     {// 들고 있는 아이템이 없으면 이미지 끄기
-        if (!InventoryManager.Instance.IsHoldingItem())
+        if (!BoxInventoryManager.Instance.IsHoldingItem())
         {
             if (heldItemImage.enabled)
             {

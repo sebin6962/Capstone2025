@@ -39,7 +39,7 @@ public class PlayerManager : MonoBehaviour
             if (currentItem.name == "wateringCan")
                 return;
 
-            if (InventoryManager.Instance.IsHoldingItem())
+            if (BoxInventoryManager.Instance.IsHoldingItem())
             {
                 Debug.Log("이미 아이템이나 도구를 들고 있어서 새로운 것을 들 수 없습니다.");
                 return;
@@ -51,20 +51,20 @@ public class PlayerManager : MonoBehaviour
             else
                 Debug.Log("아이템 들기: " + currentItem.name);
 
-            InventoryManager.Instance.HoldItem(currentItem);
+            BoxInventoryManager.Instance.HoldItem(currentItem);
         }
 
         //밭에 물주기
         if (Input.GetMouseButtonDown(0))
         {
-            if (InventoryManager.Instance.IsHoldingWateringCan() &&
+            if (BoxInventoryManager.Instance.IsHoldingWateringCan() &&
                 TryGetClickedFarmTile(out var pos1, out _))
             {
                 farmManager.WaterSoil(pos1);
                 Debug.Log("물 뿌리기 완료");
             }
-            else if (InventoryManager.Instance.IsHoldingItem() &&
-                     InventoryManager.Instance.GetHeldItemName() == "seedBag" &&
+            else if (BoxInventoryManager.Instance.IsHoldingItem() &&
+                     BoxInventoryManager.Instance.GetHeldItemName() == "seedBag" &&
                      TryGetClickedFarmTile(out var pos2, out _))
             {
                 farmManager.PlantSeed(pos2);

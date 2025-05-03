@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour
+public class BoxInventoryManager : MonoBehaviour
 {
-    public static InventoryManager Instance;
+    public static BoxInventoryManager Instance;
     //public List<Item> items = new List<Item>();
     public GameObject inventoryPanel;
     public List<InventorySlot> slots;

@@ -25,9 +25,9 @@ public class WateringCanAnchor : MonoBehaviour
     {
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.Space))
         {
-            if (!InventoryManager.Instance.IsHoldingItem())
+            if (!BoxInventoryManager.Instance.IsHoldingItem())
             {
-                InventoryManager.Instance.HoldItem(wateringCanPrefab);
+                BoxInventoryManager.Instance.HoldItem(wateringCanPrefab);
                 Destroy(placedCan);
                 placedCan = null;
                 Debug.Log("물뿌리개를 들었습니다.");
@@ -36,10 +36,10 @@ public class WateringCanAnchor : MonoBehaviour
 
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.R))
         {
-            if (InventoryManager.Instance.IsHoldingWateringCan())
+            if (BoxInventoryManager.Instance.IsHoldingWateringCan())
             {
                 RestoreWateringCan();
-                InventoryManager.Instance.RemoveHeldItem();
+                BoxInventoryManager.Instance.RemoveHeldItem();
                 Debug.Log("물뿌리개를 다시 놓았습니다.");
             }
         }

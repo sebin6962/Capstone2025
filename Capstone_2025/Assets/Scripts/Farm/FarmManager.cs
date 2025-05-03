@@ -18,6 +18,8 @@ public class FarmManager : MonoBehaviour
 
     private HashSet<Vector3Int> farmPositions = new HashSet<Vector3Int>();
 
+    private HashSet<Vector3Int> wateredTiles = new();
+
     void Start()
     {
         RegisterFarmTiles();
@@ -46,6 +48,8 @@ public class FarmManager : MonoBehaviour
         {
             AdvanceCropStage(pos);
         }
+
+        HandleRightClickHarvest();
     }
 
     // 1. 타일맵에서 밭 범위 자동 등록
@@ -95,14 +99,27 @@ public class FarmManager : MonoBehaviour
         if (IsFarmTile(worldPos))
         {
             overlayTilemap.SetTile(cellPos, wetSoilTile);
+            wateredTiles.Add(cellPos); // 물 준 위치 저장
 
-            // 작물 성장 정보가 등록된 타일인지 확인하고 물 주기
             if (growingTiles.TryGetValue(cellPos, out var tileInfo))
             {
                 tileInfo.isWatered = true;
-                Debug.Log($"작물 타일 {cellPos}에 물을 줬습니다. 성장 시작");
+                Debug.Log($"작물 타일 {cellPos}에 물을 줌 → 성장 시작");
             }
         }
+        //Vector3Int cellPos = fieldTilemap.WorldToCell(worldPos);
+
+        //if (IsFarmTile(worldPos))
+        //{
+        //    overlayTilemap.SetTile(cellPos, wetSoilTile);
+
+        //    // 작물 성장 정보가 등록된 타일인지 확인하고 물 주기
+        //    if (growingTiles.TryGetValue(cellPos, out var tileInfo))
+        //    {
+        //        tileInfo.isWatered = true;
+        //        Debug.Log($"작물 타일 {cellPos}에 물을 줬습니다. 성장 시작");
+        //    }
+        //}
     }
 
     //씨앗 뿌렸을 때 변화
@@ -121,6 +138,14 @@ public class FarmManager : MonoBehaviour
         overlay.GetComponent<SpriteRenderer>().sprite = testCropData.stages[0].sprite;
 
         var cropInfo = new CropTile(cellPos, testCropData, overlay);
+
+        // 이미 물 준 곳이면 바로 성장 시작
+        if (wateredTiles.Contains(cellPos))
+        {
+            cropInfo.isWatered = true;
+            Debug.Log($"씨앗이 심어진 타일 {cellPos}은 이미 물이 있음 → 즉시 성장 시작");
+        }
+
         growingTiles.Add(cellPos, cropInfo);
     }
 
@@ -143,5 +168,43 @@ public class FarmManager : MonoBehaviour
         
 
         Debug.Log($"작물 {tile.cropData.cropName}이 {tile.currentStage}단계로 성장함");
+    }
+
+    //수확 처리 함수
+    private void HandleRightClickHarvest()
+    {
+        if (Input.GetMouseButtonDown(1)) // 우클릭
+        {
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3Int cellPos = fieldTilemap.WorldToCell(worldPos);
+
+            if (growingTiles.TryGetValue(cellPos, out var tile))
+            {
+                bool isFullyGrown = tile.currentStage == tile.cropData.stages.Count - 1;
+
+                if (isFullyGrown)
+                {
+                    HarvestCrop(cellPos, tile.cropData.cropName);
+                }
+            }
+        }
+    }
+
+    private void HarvestCrop(Vector3Int pos, string cropName)
+    {
+        // 작물 스프라이트 제거
+        if (growingTiles[pos].cropOverlayObject != null)
+            Destroy(growingTiles[pos].cropOverlayObject);
+
+        // 젖은 흙 제거
+        overlayTilemap.SetTile(pos, null);
+
+        // 상태 제거
+        growingTiles.Remove(pos);
+
+        // 창고 인벤토리에 추가
+        StorageInventory.Instance.AddItem(cropName, 1);
+
+        Debug.Log($"작물 {cropName} 수확됨 → 창고로 이동");
     }
 }

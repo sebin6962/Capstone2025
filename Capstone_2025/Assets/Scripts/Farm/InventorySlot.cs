@@ -11,18 +11,18 @@ public class InventorySlot : MonoBehaviour
     public void OnClick()
     {
         bool slotHasItem = HasItem();
-        bool isHolding = InventoryManager.Instance.IsHoldingItem();
+        bool isHolding = BoxInventoryManager.Instance.IsHoldingItem();
 
         if (!slotHasItem && isHolding)
         {
             // 빈 슬롯 + 아이템 들고 있음 → 아이템을 슬롯에 넣는다
-            InventoryManager.Instance.PlaceHeldItemInSlot(this);
+            BoxInventoryManager.Instance.PlaceHeldItemInSlot(this);
 
         }
         else if (slotHasItem && !isHolding)
         {
             // 슬롯에 아이템 있고 + 아무것도 안 들고 있음 → 아이템을 슬롯에서 다시 든다
-            InventoryManager.Instance.PickUpFromSlot(this);
+            BoxInventoryManager.Instance.PickUpFromSlot(this);
         }
         else
         {
