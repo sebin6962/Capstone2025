@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -7,18 +7,29 @@ using System.Collections;
 public class FadeManager : MonoBehaviour
 {
     public static FadeManager Instance;
-
     public Image fadeImage;
     public float fadeDuration = 1f;
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            fadeImage.color = new Color(0, 0, 0, 1); // ì”¬ ì‹œìž‘ ì‹œ ì™„ì „ ê²€ì •
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    public void FadeToScene(string sceneName, float delay = 1f)
+    private void Start()
+    {
+        StartCoroutine(FadeIn());
+    }
+
+    public void FadeToScene(string sceneName, float delay = 0.5f)
     {
         StartCoroutine(FadeRoutine(sceneName, delay));
     }
@@ -27,16 +38,19 @@ public class FadeManager : MonoBehaviour
     {
         yield return StartCoroutine(FadeOut());
 
-        //¾À ·Îµå Àü¿¡ È®½ÇÈ÷ °ËÁ¤ À¯Áö
-        var color = fadeImage.color;
-        color.a = 1f;
-        fadeImage.color = color;
+        fadeImage.color = new Color(0, 0, 0, 1);
+        fadeImage.enabled = true;
 
         yield return new WaitForSeconds(delay);
 
-        SceneManager.LoadScene(sceneName);
-        yield return new WaitForSeconds(0.1f); // ¾À ·Îµå ÈÄ ÇÑ ÇÁ·¹ÀÓ ´ë±â
+        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
+        op.allowSceneActivation = false;
 
+        while (op.progress < 0.9f) yield return null;
+        yield return new WaitForEndOfFrame();
+        op.allowSceneActivation = true;
+
+        yield return null;
         yield return StartCoroutine(FadeIn());
     }
 
@@ -55,9 +69,7 @@ public class FadeManager : MonoBehaviour
 
     public IEnumerator FadeIn()
     {
-        //¾ËÆÄ ÃÊ±âÈ­
         fadeImage.color = new Color(0, 0, 0, 1);
-
         float t = 0;
         Color color = fadeImage.color;
         while (t < fadeDuration)

@@ -6293,8 +6293,8 @@ Camera:
   m_GameObject: {fileID: 2130387756}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -6795,6 +6795,38 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 819321330000850586, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 819321330000850586, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 819321330000850586, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819321330000850586, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819321330000850586, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819321330000850586, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819321330000850586, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819321330000850586, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1854384794344433817, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.3323174
@@ -6833,6 +6865,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1854384794344433817, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2058603049721406106, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5808641548537149697, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
+      propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6167977636726142153, guid: 6621ee9839d561149ad0494ba190a635, type: 3}
