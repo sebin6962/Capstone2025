@@ -17,9 +17,23 @@ public class GameManager : MonoBehaviour
             ToggleInventory();
         }
     }
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
+
     private void ToggleInventory()
     {
         bool isActive = inventoryPanel.activeSelf;
         inventoryPanel.SetActive(!isActive);
+    }
+
+    public bool IsInventoryOpen()
+    {
+        return inventoryPanel.activeSelf;
     }
 }

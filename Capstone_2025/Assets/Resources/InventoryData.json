@@ -1,12 +1,7 @@
 [
   {
-    "id": "seed",
-    "name": "Seed",
-    "spritePath": "Sprites/seed"
-  },
-  {
-    "id": "corn",
-    "name": "Corn",
-    "spritePath": "Sprites/corn"
+    "id": "seedBag",
+    "name": "seedBag",
+    "spritePath": "Sprites/seedBag"
   }
 ]
