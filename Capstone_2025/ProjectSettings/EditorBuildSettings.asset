@@ -8,4 +8,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/VillageScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/PlayerStoreScene.unity
+    guid: c140ba5627e1a094380c803517211268
+  - enabled: 1
+    path: Assets/Scenes/TreeScene.unity
+    guid: 2b6e828122d30ad46a58d9d08333b366
+  - enabled: 1
+    path: Assets/Scenes/MillScene.unity
+    guid: 884892717dc3b3645a3b843505f168fc
+  - enabled: 1
+    path: Assets/Scenes/MarketScene.unity
+    guid: 391848bec106d024990adf2686e7e824
   m_configObjects: {}

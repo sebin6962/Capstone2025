@@ -9,6 +9,7 @@ TagManager:
   - UI
   - Map
   - Tool
+  - PlayerStore
   layers:
   - Default
   - TransparentFX
