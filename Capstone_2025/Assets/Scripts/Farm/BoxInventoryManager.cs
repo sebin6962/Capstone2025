@@ -1,26 +1,28 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class BoxInventoryManager : MonoBehaviour
 {
     public static BoxInventoryManager Instance;
-    //public List<Item> items = new List<Item>();
+
     public GameObject inventoryPanel;
     public List<InventorySlot> slots;
-    private GameObject heldItem;
 
+    private GameObject heldItem;
     private Sprite heldSprite;
     private string heldItemName;
 
-
+    private string savePath;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-    }
 
+        savePath = Path.Combine(Application.persistentDataPath, "boxInventory.json");
+        LoadInventory();
+    }
 
     public bool IsHoldingTool(string toolName)
     {
@@ -30,104 +32,9 @@ public class BoxInventoryManager : MonoBehaviour
                heldItemName == toolName;
     }
 
-    public bool IsHoldingWateringCan() //플레이어가 든 도구가 물뿌리개임을 확인
+    public bool IsHoldingWateringCan()
     {
         return IsHoldingTool("wateringCan");
-    }
-
-
-
-    public void HoldItem(GameObject item)
-    {
-        heldItem = item;
-
-        var spriteRenderer = item.GetComponent<SpriteRenderer>();
-
-        if (spriteRenderer != null)
-        {
-            heldSprite = spriteRenderer.sprite;
-            heldItemName = spriteRenderer.sprite.name;
-            HeldItemManager.Instance.ShowHeldItem(heldSprite); // UI 표시
-            //Debug.Log("들고 있는 아이템: " + heldItemName);
-
-            Debug.Log($"[DEBUG] 들고 있는 아이템 이름: {heldItemName}");
-            Debug.Log($"[DEBUG] IsTool: {ToolData.Instance.IsTool(heldItemName)}");
-            Debug.Log($"[DEBUG] IsHoldingWateringCan: {IsHoldingWateringCan()}");
-        }
-
-        //item.SetActive(false);
-        Destroy(item);
-    }
-
-    public void PlaceHeldItemInSlot(InventorySlot slot)
-    {
-        Debug.Log("슬롯 클릭 - 아이템 넣기 시도");
-
-        if (heldSprite == null)
-        {
-
-            Debug.LogWarning("들고 있는 스프라이트가 없음! 아이템이 null임");
-            return;
-        }
-
-        // 도구(물뿌리개)는 슬롯에 넣을 수 없음
-        if (ToolData.Instance.IsTool(heldItemName))
-        {
-            Debug.Log("도구는 상자에 저장할 수 없습니다: " + heldItemName);
-            return;
-        }
-
-        slot.SetItem(heldSprite, heldItemName);
-
-        heldItem = null;
-        heldSprite = null;
-        heldItemName = null;
-
-        HeldItemManager.Instance.HideHeldItem(); // UI 숨기기
-        SaveInventory();
-    }
-
-    public void PickUpFromSlot(InventorySlot slot)
-    {
-        if (!slot.HasItem()) return;
-
-        heldSprite = slot.GetSprite();
-        heldItemName = slot.GetItemName();
-        heldItem = null; // 슬롯에서 온 것이므로 GameObject는 null
-
-        slot.ClearSlot();
-        HeldItemManager.Instance.ShowHeldItem(heldSprite); // UI 표시
-
-        Debug.Log("인벤토리에서 아이템 다시 듦: " + heldItemName);
-    }
-
-    public void SaveInventory()
-    {
-        List<string> spriteNames = new List<string>();
-        foreach (var slot in slots)
-        {
-            spriteNames.Add(slot.HasItem() ? slot.GetItemName() : "");
-        }
-
-        string json = JsonUtility.ToJson(new InventorySaveData { items = spriteNames });
-        PlayerPrefs.SetString("Inventory", json);
-    }
-
-    public void LoadInventory()
-    {
-        string json = PlayerPrefs.GetString("Inventory", "");
-        if (!string.IsNullOrEmpty(json))
-        {
-            InventorySaveData data = JsonUtility.FromJson<InventorySaveData>(json);
-            for (int i = 0; i < slots.Count; i++)
-            {
-                if (!string.IsNullOrEmpty(data.items[i]))
-                {
-                    Sprite itemSprite = Resources.Load<Sprite>("Sprites/" + data.items[i]);
-                    slots[i].SetItem(itemSprite, data.items[i]);
-                }
-            }
-        }
     }
 
     public bool IsHoldingItem()
@@ -148,9 +55,158 @@ public class BoxInventoryManager : MonoBehaviour
         HeldItemManager.Instance.HideHeldItem();
     }
 
+    public void HoldItem(GameObject item)
+    {
+        heldItem = item;
+
+        var spriteRenderer = item.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            heldSprite = spriteRenderer.sprite;
+            heldItemName = heldSprite.name;
+
+            HeldItemManager.Instance.ShowHeldItem(heldSprite);
+
+            Debug.Log($"[DEBUG] 들고 있는 아이템 이름: {heldItemName}");
+            Debug.Log($"[DEBUG] IsTool: {ToolData.Instance.IsTool(heldItemName)}");
+            Debug.Log($"[DEBUG] IsHoldingWateringCan: {IsHoldingWateringCan()}");
+        }
+
+        Destroy(item);
+    }
+
+    public void PlaceHeldItemInSlot(InventorySlot clickedSlot = null)
+    {
+        Debug.Log("슬롯 클릭 - 아이템 넣기 시도");
+
+        if (heldSprite == null)
+        {
+            Debug.LogWarning("들고 있는 스프라이트가 없음! 아이템이 null임");
+            return;
+        }
+
+        // 도구는 저장 불가
+        if (ToolData.Instance.IsTool(heldItemName))
+        {
+            Debug.Log("도구는 상자에 저장할 수 없습니다: " + heldItemName);
+            return;
+        }
+
+        // 1. 동일 아이템 있는 슬롯 찾기
+        foreach (var slot in slots)
+        {
+            if (slot.HasItem() && slot.GetItemName() == heldItemName)
+            {
+                int newCount = slot.GetItemCount() + 1;
+                slot.SetItem(slot.GetSprite(), heldItemName, newCount);
+                RemoveHeldItem();
+                SaveInventory();
+                return;
+            }
+        }
+
+        // 2. 빈 슬롯 찾기
+        foreach (var slot in slots)
+        {
+            if (!slot.HasItem())
+            {
+                slot.SetItem(heldSprite, heldItemName, 1);
+                RemoveHeldItem();
+                SaveInventory();
+                return;
+            }
+        }
+
+        Debug.Log("인벤토리에 빈 슬롯이 없습니다.");
+    }
+
+    public void PickUpFromSlot(InventorySlot slot)
+    {
+        if (!slot.HasItem()) return;
+
+        heldSprite = slot.GetSprite();
+        heldItemName = slot.GetItemName();
+        heldItem = null;
+
+        slot.ClearSlot();
+        HeldItemManager.Instance.ShowHeldItem(heldSprite);
+
+        Debug.Log("인벤토리에서 아이템 다시 듦: " + heldItemName);
+        SaveInventory();
+    }
+
+    public void SaveInventory()
+    {
+        var data = new InventorySaveData();
+        foreach (var slot in slots)
+        {
+            data.items.Add(new InventorySlotData
+            {
+                itemName = slot.HasItem() ? slot.GetItemName() : "",
+                count = slot.HasItem() ? slot.GetItemCount() : 0
+            });
+        }
+
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(savePath, json);
+        Debug.Log($"[저장 완료] {savePath}");
+    }
+
+    public void LoadInventory()
+    {
+        if (!File.Exists(savePath))
+        {
+            Debug.Log("인벤토리 저장 파일 없음");
+            return;
+        }
+
+        string json = File.ReadAllText(savePath);
+        var data = JsonUtility.FromJson<InventorySaveData>(json);
+
+        for (int i = 0; i < slots.Count && i < data.items.Count; i++)
+        {
+            var item = data.items[i];
+            if (!string.IsNullOrEmpty(item.itemName) && item.count > 0)
+            {
+                Sprite sprite = Resources.Load<Sprite>("Sprites/" + item.itemName);
+                slots[i].SetItem(sprite, item.itemName, item.count);
+            }
+            else
+            {
+                slots[i].ClearSlot();
+            }
+        }
+
+        Debug.Log("인벤토리 불러오기 완료");
+    }
+
+    public Sprite GetHeldSprite()
+    {
+        return heldSprite;
+    }
+
+    //수량 분리해서 들기 함수(한 번 클릭 시 아이템 하나만 들기)
+    public void HoldItemFromSlot(Sprite sprite, string itemName)
+    {
+        heldSprite = sprite;
+        heldItemName = itemName;
+        heldItem = null;
+
+        HeldItemManager.Instance.ShowHeldItem(heldSprite);
+
+        Debug.Log($"[분리] 슬롯에서 {itemName} 1개만 손에 듬");
+    }
+
+    [System.Serializable]
+    public class InventorySlotData
+    {
+        public string itemName;
+        public int count;
+    }
+
     [System.Serializable]
     public class InventorySaveData
     {
-        public List<string> items;
+        public List<InventorySlotData> items = new();
     }
 }
