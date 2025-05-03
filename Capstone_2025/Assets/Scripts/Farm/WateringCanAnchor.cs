@@ -23,15 +23,23 @@ public class WateringCanAnchor : MonoBehaviour
 
     void Update()
     {
-        // 플레이어가 근처에 있고, 물뿌리개를 들고 있고, 스페이스키를 눌렀다면
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.Space))
+        {
+            if (!InventoryManager.Instance.IsHoldingItem())
+            {
+                InventoryManager.Instance.HoldItem(wateringCanPrefab);
+                Destroy(placedCan);
+                placedCan = null;
+                Debug.Log("물뿌리개를 들었습니다.");
+            }
+        }
+
+        if (isPlayerNearby && Input.GetKeyDown(KeyCode.R))
         {
             if (InventoryManager.Instance.IsHoldingWateringCan())
             {
-                // 물뿌리개 내려놓기
                 RestoreWateringCan();
-                InventoryManager.Instance.RemoveHeldItem(); // 손에서 해제
-
+                InventoryManager.Instance.RemoveHeldItem();
                 Debug.Log("물뿌리개를 다시 놓았습니다.");
             }
         }
@@ -43,9 +51,9 @@ public class WateringCanAnchor : MonoBehaviour
         {
             placedCan = Instantiate(wateringCanPrefab, transform.position, Quaternion.identity);
             // Z 위치 고정
-            Vector3 pos = placedCan.transform.position;
-            pos.z = 0f;
-            placedCan.transform.position = pos;
+            Vector3 fixedPos = placedCan.transform.position;
+            fixedPos.z = 0f;
+            placedCan.transform.position = fixedPos;
 
             Debug.Log("물뿌리개 생성 위치: " + transform.position);
         }

@@ -14,7 +14,7 @@ public class PlayerManager : MonoBehaviour
 
     //밭에 물 주는 변수
     public FarmManager farmManager;
-    public bool isHoldingWateringCan = false;
+    //public bool isHoldingWateringCan = false;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +35,10 @@ public class PlayerManager : MonoBehaviour
 
         if (currentItem != null && Input.GetKeyDown(KeyCode.Space))
         {
+            // 물뿌리개는 WateringCanAnchor에서만 다루기
+            if (currentItem.name == "wateringCan")
+                return;
+
             if (InventoryManager.Instance.IsHoldingItem())
             {
                 Debug.Log("이미 아이템이나 도구를 들고 있어서 새로운 것을 들 수 없습니다.");

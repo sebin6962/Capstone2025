@@ -1,7 +1,7 @@
  [
-    {
-      "id": "wateringcan",
-      "name": "wateringCan",
-      "spritePath": "Sprites/wateringCan"
-    }
+  {
+    "id": "wateringcan",
+    "name": "wateringCan",
+    "spritePath": "Sprites/wateringCan"
+  }
  ]

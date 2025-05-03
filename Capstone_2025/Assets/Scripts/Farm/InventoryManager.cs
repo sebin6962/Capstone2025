@@ -48,7 +48,11 @@ public class InventoryManager : MonoBehaviour
             heldSprite = spriteRenderer.sprite;
             heldItemName = spriteRenderer.sprite.name;
             HeldItemManager.Instance.ShowHeldItem(heldSprite); // UI 표시
-            Debug.Log("들고 있는 아이템: " + heldItemName);
+            //Debug.Log("들고 있는 아이템: " + heldItemName);
+
+            Debug.Log($"[DEBUG] 들고 있는 아이템 이름: {heldItemName}");
+            Debug.Log($"[DEBUG] IsTool: {ToolData.Instance.IsTool(heldItemName)}");
+            Debug.Log($"[DEBUG] IsHoldingWateringCan: {IsHoldingWateringCan()}");
         }
 
         //item.SetActive(false);
