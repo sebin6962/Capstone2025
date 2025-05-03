@@ -31,4 +31,9 @@ public class GameManager : MonoBehaviour
         bool isActive = inventoryPanel.activeSelf;
         inventoryPanel.SetActive(!isActive);
     }
+
+    public bool IsInventoryOpen()
+    {
+        return inventoryPanel.activeSelf;
+    }
 }

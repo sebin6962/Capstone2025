@@ -25,6 +25,11 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsInventoryOpen())
+        {
+            movement = Vector2.zero;
+            //return; // 움직임 및 입력 차단
+        }
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");//입력감지
 
@@ -83,6 +88,9 @@ public class PlayerManager : MonoBehaviour
     }
     void FixedUpdate()
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsInventoryOpen())
+            return;
+
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }
 
@@ -90,6 +98,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (other.CompareTag("Item"))
         {
+            Debug.Log("접촉한 아이템: " + other.name);
             currentItem = other.gameObject;
         }
     }

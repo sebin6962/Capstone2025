@@ -42,6 +42,7 @@ public class InventoryManager : MonoBehaviour
         heldItem = item;
 
         var spriteRenderer = item.GetComponent<SpriteRenderer>();
+
         if (spriteRenderer != null)
         {
             heldSprite = spriteRenderer.sprite;
@@ -50,7 +51,8 @@ public class InventoryManager : MonoBehaviour
             Debug.Log("들고 있는 아이템: " + heldItemName);
         }
 
-        item.SetActive(false);
+        //item.SetActive(false);
+        Destroy(item);
     }
 
     public void PlaceHeldItemInSlot(InventorySlot slot)
@@ -61,6 +63,13 @@ public class InventoryManager : MonoBehaviour
         {
 
             Debug.LogWarning("들고 있는 스프라이트가 없음! 아이템이 null임");
+            return;
+        }
+
+        // 도구(물뿌리개)는 슬롯에 넣을 수 없음
+        if (ToolData.Instance.IsTool(heldItemName))
+        {
+            Debug.Log("도구는 상자에 저장할 수 없습니다: " + heldItemName);
             return;
         }
 
@@ -125,6 +134,14 @@ public class InventoryManager : MonoBehaviour
     public string GetHeldItemName()
     {
         return heldItemName;
+    }
+
+    public void RemoveHeldItem()
+    {
+        heldItem = null;
+        heldSprite = null;
+        heldItemName = null;
+        HeldItemManager.Instance.HideHeldItem();
     }
 
     [System.Serializable]
