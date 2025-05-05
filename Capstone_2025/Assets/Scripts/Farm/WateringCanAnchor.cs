@@ -27,7 +27,8 @@ public class WateringCanAnchor : MonoBehaviour
         {
             if (!BoxInventoryManager.Instance.IsHoldingItem())
             {
-                BoxInventoryManager.Instance.HoldItem(wateringCanPrefab);
+                GameObject canInstance = Instantiate(wateringCanPrefab); // 복제본 생성
+                BoxInventoryManager.Instance.HoldItem(canInstance);
                 Destroy(placedCan);
                 placedCan = null;
                 Debug.Log("물뿌리개를 들었습니다.");
@@ -36,12 +37,25 @@ public class WateringCanAnchor : MonoBehaviour
 
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.Space))
         {
-            if (BoxInventoryManager.Instance.IsHoldingWateringCan())
+            if (BoxInventoryManager.Instance.IsHoldingItem() &&
+        BoxInventoryManager.Instance.IsHoldingWateringCan())
             {
                 RestoreWateringCan();
                 BoxInventoryManager.Instance.RemoveHeldItem();
                 Debug.Log("물뿌리개를 다시 놓았습니다.");
             }
+            else
+            {
+                Debug.Log("물뿌리개를 들고 있지 않음");
+            }
+
+            //수정 필요
+            //if (BoxInventoryManager.Instance.IsHoldingWateringCan())
+            //{
+            //    RestoreWateringCan();
+            //    BoxInventoryManager.Instance.RemoveHeldItem();
+            //    Debug.Log("물뿌리개를 다시 놓았습니다.");
+            //}
         }
     }
 

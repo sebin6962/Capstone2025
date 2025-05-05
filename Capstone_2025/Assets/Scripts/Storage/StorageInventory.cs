@@ -85,5 +85,10 @@ public class StorageInventory : MonoBehaviour
             Debug.Log("저장된 창고 없음. 새로 시작합니다.");
         }
     }
+
+    public Dictionary<string, int> GetAllItems()
+    {
+        return new Dictionary<string, int>(storage);
+    }
 }
 

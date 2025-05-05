@@ -34,7 +34,11 @@ public class BoxInventoryManager : MonoBehaviour
 
     public bool IsHoldingWateringCan()
     {
-        return IsHoldingTool("wateringCan");
+        if (!IsHoldingItem()) return false;
+        if (heldItemName != "wateringCan") return false;
+        if (ToolData.Instance == null) return false;
+        return ToolData.Instance.IsTool(heldItemName);
+        // return IsHoldingTool("wateringCan");
     }
 
     public bool IsHoldingItem()
