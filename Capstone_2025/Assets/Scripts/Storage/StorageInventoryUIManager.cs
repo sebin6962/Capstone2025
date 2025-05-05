@@ -19,6 +19,9 @@ public class StorageInventoryUIManager : MonoBehaviour
             UpdateSlots();
             panel.SetActive(true);
         }
+
+        // 창고 열 때 확인 처리
+        StorageAlertManager.Instance.OnStorageOpened();
     }
 
     public void UpdateSlots()

@@ -107,19 +107,6 @@ public class FarmManager : MonoBehaviour
                 Debug.Log($"작물 타일 {cellPos}에 물을 줌 → 성장 시작");
             }
         }
-        //Vector3Int cellPos = fieldTilemap.WorldToCell(worldPos);
-
-        //if (IsFarmTile(worldPos))
-        //{
-        //    overlayTilemap.SetTile(cellPos, wetSoilTile);
-
-        //    // 작물 성장 정보가 등록된 타일인지 확인하고 물 주기
-        //    if (growingTiles.TryGetValue(cellPos, out var tileInfo))
-        //    {
-        //        tileInfo.isWatered = true;
-        //        Debug.Log($"작물 타일 {cellPos}에 물을 줬습니다. 성장 시작");
-        //    }
-        //}
     }
 
     //씨앗 뿌렸을 때 변화
@@ -205,6 +192,19 @@ public class FarmManager : MonoBehaviour
         // 창고 인벤토리에 추가
         StorageInventory.Instance.AddItem(cropName, 1);
 
+        // 스프라이트 가져오기
+        Sprite cropSprite = Resources.Load<Sprite>("Sprites/" + cropName);
+
+        // 이 타일의 월드 위치 기준
+        Vector3 worldPos = fieldTilemap.CellToWorld(pos) + new Vector3(0.5f, 0.5f, 0);
+
+        // 날아가는 애니메이션 실행
+        StorageIconFlyEffect.Instance.Play(cropSprite, worldPos);
+
+        // 0.5초 뒤 알림 등록
+        StorageAlertManager.Instance.NotifyNewHarvestedItem(cropName);
+
         Debug.Log($"작물 {cropName} 수확됨 → 창고로 이동");
+
     }
 }
