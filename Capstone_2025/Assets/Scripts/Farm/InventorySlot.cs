@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class InventorySlot : MonoBehaviour
 {
     public Image itemImage;
-    public Text countText;
+    public TextMeshProUGUI countText;
 
     private string itemName;
     private int count;

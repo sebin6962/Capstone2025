@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class StorageInventorySlot : MonoBehaviour
 {
     public Image itemImage;
-    public Text countText;
+    public TextMeshProUGUI countText;
 
     public void SetItem(Sprite sprite, int count)
     {
