@@ -130,6 +130,8 @@ public class DoGamUIManager : MonoBehaviour
     public void CloseDoGam()
     {
         panel.SetActive(false);
+        prevButton.gameObject.SetActive(false); // 버튼 숨기기
+        nextButton.gameObject.SetActive(false); // 버튼 숨기기
     }
 
     public void NextEntry()
