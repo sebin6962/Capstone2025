@@ -15,8 +15,14 @@ public class DoGamUIManager : MonoBehaviour
     public Button nextButton;
     public Button prevButton;
 
+    public Button tteokButton;
+    public Button drinkButton;
+    public Button guestButton;
+
     private int currentIndex = 0;
-    private List<DoGamEntry> entryList = new();
+
+    private List<DoGamEntry> entryList = new(); // 현재 표시할 목록
+    private List<DoGamEntry> allEntries = new(); // 전체 목록
 
     public Image itemImage;
     public TextMeshProUGUI nameText;
@@ -31,6 +37,10 @@ public class DoGamUIManager : MonoBehaviour
 
         openButton.onClick.AddListener(() => OpenDoGam("백설기"));
         closeButton.onClick.AddListener(CloseDoGam);
+
+        tteokButton.onClick.AddListener(() => FilterByCategory("떡"));
+        drinkButton.onClick.AddListener(() => FilterByCategory("음료"));
+        guestButton.onClick.AddListener(() => FilterByCategory("손님"));
 
         panel.SetActive(false);
         prevButton.gameObject.SetActive(false); // 버튼 숨기기
@@ -81,6 +91,7 @@ public class DoGamUIManager : MonoBehaviour
 
         doGamDict = new Dictionary<string, DoGamEntry>();
         entryList = new List<DoGamEntry>(data.entries);
+        allEntries = new List<DoGamEntry>(data.entries);
 
         foreach (var entry in data.entries)
             doGamDict[entry.name] = entry;
@@ -98,6 +109,8 @@ public class DoGamUIManager : MonoBehaviour
             Debug.LogWarning($"도감 항목 '{itemName}'을 찾을 수 없습니다.");
             return;
         }
+
+        FilterByCategory("떡"); // 도감 열면 무조건 '떡' 필터 적용
 
         // 버튼을 가장 위로 올림 (레이캐스트 우선순위 확보)
         prevButton.transform.SetAsLastSibling();
@@ -125,6 +138,19 @@ public class DoGamUIManager : MonoBehaviour
         descriptionText.text = entry.description;
         recipeText.text = string.Join("\n", entry.recipe);
         itemImage.sprite = Resources.Load<Sprite>("Sprites/" + entry.image);
+    }
+
+    public void FilterByCategory(string category)
+    {
+        entryList = allEntries.FindAll(e => e.category == category);
+        if (entryList.Count == 0)
+        {
+            Debug.LogWarning($"카테고리 '{category}'에 해당하는 레시피가 없습니다.");
+            return;
+        }
+
+        currentIndex = 0;
+        ShowEntry(currentIndex);
     }
 
     public void CloseDoGam()

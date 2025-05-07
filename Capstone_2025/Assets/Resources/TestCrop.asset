@@ -14,9 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cropName: Rice
   stages:
-  - sprite: {fileID: 21300000, guid: 7b62343416a6d64469784eb602d1c312, type: 3}
+  - sprite: {fileID: 21300000, guid: c3a80fffdfe51424cb2951d05f064380, type: 3}
     timeToNextStage: 5
-  - sprite: {fileID: 21300000, guid: 012ed274d1a544743b8e722b998a7ed4, type: 3}
+  - sprite: {fileID: 21300000, guid: 0f8109124b9c708499e16e03241bde48, type: 3}
     timeToNextStage: 5
-  - sprite: {fileID: 21300000, guid: 28ea1320470498f42a6784f6715135df, type: 3}
+  - sprite: {fileID: 21300000, guid: d327647372430794aa31b93df6a9d9ad, type: 3}
+    timeToNextStage: 5
+  - sprite: {fileID: 21300000, guid: 4fe155953f762fc4f8bd2cda16610882, type: 3}
+    timeToNextStage: 5
+  - sprite: {fileID: 21300000, guid: d0aab9cea28910a4fb275b4d7775a807, type: 3}
     timeToNextStage: 5

@@ -9,6 +9,7 @@ public class DoGamEntry
     public string image;
     public string description;
     public List<string> recipe;
+    public string category;
 }
 
 [System.Serializable]
