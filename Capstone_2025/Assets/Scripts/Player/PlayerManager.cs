@@ -33,7 +33,7 @@ public class PlayerManager : MonoBehaviour
             }
         }
 
-        if (GameManager.Instance != null && GameManager.Instance.IsInventoryOpen())
+        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
         {
             movement = Vector2.zero;
             //return; // 움직임 및 입력 차단
@@ -100,7 +100,7 @@ public class PlayerManager : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (GameManager.Instance != null && GameManager.Instance.IsInventoryOpen())
+        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
             return;
 
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);

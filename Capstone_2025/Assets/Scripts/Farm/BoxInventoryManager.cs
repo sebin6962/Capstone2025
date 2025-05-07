@@ -24,6 +24,25 @@ public class BoxInventoryManager : MonoBehaviour
         LoadInventory();
     }
 
+    void Update()
+    {
+        if (BoxTrigger.isPlayerNearBox && Input.GetKeyDown(KeyCode.E))
+        {
+            ToggleInventory();
+        }
+    }
+
+    private void ToggleInventory()
+    {
+        bool isActive = inventoryPanel.activeSelf;
+        inventoryPanel.SetActive(!isActive);
+    }
+
+    public bool IsInventoryOpen()
+    {
+        return inventoryPanel.activeSelf;
+    }
+
     public bool IsHoldingTool(string toolName)
     {
         return heldItemName != null &&
