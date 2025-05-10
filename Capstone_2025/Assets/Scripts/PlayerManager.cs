@@ -17,7 +17,8 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
     {
-        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
+        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen() ||
+        (PopupInventoryUIManager.Instance != null && PopupInventoryUIManager.Instance.IsPopupOpen()))
         {
             movement = Vector2.zero;
             return;
@@ -29,7 +30,8 @@ public class PlayerManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
+        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen() ||
+        (PopupInventoryUIManager.Instance != null && PopupInventoryUIManager.Instance.IsPopupOpen()))
             return;
 
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);

@@ -2,6 +2,8 @@
   "items": [
     { "name": "멥쌀가루", "category": "체치기재료" },
     { "name": "찹쌀가루", "category": "체치기재료" },
-    { "name": "Rice", "category": "체치기재료" }
+    { "name": "Rice", "category": "체치기재료" },
+    { "name": "Danhobakgaru", "category": "체치기재료"},
+    { "name": "Chapssalgaru","category": "체치기재료" }
   ]
 }

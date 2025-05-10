@@ -3,24 +3,50 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class PopupInventoryUIManager : MonoBehaviour
 {
     public GameObject panel;
     public List<StorageInventorySlot> slots;
 
+    public static PopupInventoryUIManager Instance;
+
+    public Transform floatingImageTarget; // 플레이어 머리 위에 따라갈 대상 (예: Player의 empty 자식 오브젝트)
+    public RectTransform floatingItemContainer; // 그리드 컨테이너
+    public RectTransform floatingItemImagePrefab; // 아이콘 프리팹 (Image + RectTransform)
+    public int maxFloatingItems = 4;
+
+    private List<RectTransform> floatingImages = new();        // 생성된 이미지들
+    private List<string> selectedItemNames = new();             // 선택된 아이템 이름 추적
+
     // UI 텍스트들
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI actionButtonText;
 
     public GameObject closeButton;
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void LateUpdate()
+    {
+        if (floatingItemContainer != null && floatingImageTarget != null)
+        {
+            floatingItemContainer.position = floatingImageTarget.position;
+        }
+    }
 
     public void ShowPopup()
     {
         UpdateSlots();
         panel.SetActive(true);
         closeButton.gameObject.SetActive(true); 
+    }
+
+    public bool IsPopupOpen()
+    {
+        return panel.activeSelf;
     }
 
     public void ShowPopupForCategory(string category, string title, string actionBtn)
@@ -61,6 +87,16 @@ public class PopupInventoryUIManager : MonoBehaviour
     {
         panel.SetActive(false);
         closeButton.gameObject.SetActive(false);
+
+        // 생성된 아이콘 프리팹 전부 제거
+        foreach (var image in floatingImages)
+        {
+            if (image != null)
+                Destroy(image.gameObject);
+        }
+
+        floatingImages.Clear();
+        selectedItemNames.Clear();
     }
 
     public void UpdateSlots()
@@ -84,4 +120,32 @@ public class PopupInventoryUIManager : MonoBehaviour
             i++;
         }
     }
+
+
+    public void OnItemSelected(string itemName, Sprite sprite)
+    {
+        if (selectedItemNames.Contains(itemName) || selectedItemNames.Count >= maxFloatingItems)
+            return;
+
+        selectedItemNames.Add(itemName);
+
+        RectTransform newImage = Instantiate(floatingItemImagePrefab, floatingItemImagePrefab.parent);
+        newImage.GetComponent<Image>().sprite = sprite;
+        newImage.gameObject.SetActive(true);
+
+        floatingImages.Add(newImage);
+        Debug.Log($"[OnItemSelected] {itemName} 선택됨. floatingImages.Count = {floatingImages.Count}");
+    }
+
+
+    public void OnItemDeselected(string itemName)
+    {
+        int index = selectedItemNames.IndexOf(itemName);
+        if (index < 0) return;
+
+        Destroy(floatingImages[index].gameObject);
+        floatingImages.RemoveAt(index);
+        selectedItemNames.RemoveAt(index);
+    }
+
 }
