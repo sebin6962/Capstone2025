@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class PopupInventoryUIManager : MonoBehaviour
 {
@@ -13,10 +14,13 @@ public class PopupInventoryUIManager : MonoBehaviour
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI actionButtonText;
 
+    public GameObject closeButton;
+
     public void ShowPopup()
     {
         UpdateSlots();
         panel.SetActive(true);
+        closeButton.gameObject.SetActive(true); 
     }
 
     public void ShowPopupForCategory(string category, string title, string actionBtn)
@@ -50,11 +54,13 @@ public class PopupInventoryUIManager : MonoBehaviour
         actionButtonText.text = actionBtn;
 
         panel.SetActive(true);
+        closeButton.gameObject.SetActive(true);
     }
 
     public void HidePopup()
     {
         panel.SetActive(false);
+        closeButton.gameObject.SetActive(false);
     }
 
     public void UpdateSlots()

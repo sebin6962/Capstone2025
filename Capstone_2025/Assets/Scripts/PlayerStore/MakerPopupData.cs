@@ -5,6 +5,7 @@ using UnityEngine;
 public class MakerPopupEntry
 {
     public string tag;
+    public string makerId;
     public string category;
     public string title;
     public string actionLabel;
@@ -39,7 +40,7 @@ public static class MakerPopupData
 
         foreach (var entry in list.makers)
         {
-            popupMap[entry.tag] = entry;
+            popupMap[entry.makerId] = entry;
         }
 
         Debug.Log($"[MakerPopupData] 제작기 팝업 매핑 {popupMap.Count}개 로드됨");
