@@ -1,28 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class PlayerManager : MonoBehaviour
+public class VillagePlayerManager : MonoBehaviour
 {
-    public float moveSpeed = 10f;
-    Rigidbody2D rb;
-    Animator animator;
-
-    private Vector2 movement;
     private GameObject currentItem;
 
-    //밭에 물 주는 변수
     public FarmManager farmManager;
-    //public bool isHoldingWateringCan = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -33,17 +18,8 @@ public class PlayerManager : MonoBehaviour
             }
         }
 
-        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
-        {
-            movement = Vector2.zero;
-            //return; // 움직임 및 입력 차단
-        }
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");//입력감지
-
         if (currentItem != null && Input.GetKeyDown(KeyCode.Space))
         {
-            // 물뿌리개는 WateringCanAnchor에서만 다루기
             if (currentItem.name == "wateringCan")
                 return;
 
@@ -53,7 +29,6 @@ public class PlayerManager : MonoBehaviour
                 return;
             }
 
-            // 구별 로그
             if (ToolData.Instance.IsTool(currentItem.name))
                 Debug.Log("도구 들기: " + currentItem.name);
             else
@@ -62,7 +37,6 @@ public class PlayerManager : MonoBehaviour
             BoxInventoryManager.Instance.HoldItem(currentItem);
         }
 
-        //밭에 물주기
         if (Input.GetMouseButtonDown(0))
         {
             if (BoxInventoryManager.Instance.IsHoldingWateringCan() &&
@@ -97,13 +71,6 @@ public class PlayerManager : MonoBehaviour
         int dy = Mathf.Abs(clickedCell.y - playerCell.y);
 
         return dx <= 1 && dy <= 1 && farmManager.IsFarmTile(worldPos);
-    }
-    void FixedUpdate()
-    {
-        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
-            return;
-
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
