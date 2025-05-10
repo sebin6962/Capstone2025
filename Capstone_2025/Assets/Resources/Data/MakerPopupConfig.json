@@ -1,0 +1,22 @@
+{
+  "makers": [
+    {
+      "tag": "Sieve",
+      "category": "체치기재료",
+      "title": "어떤 재료를 체 칠까?",
+      "actionLabel": "체로 치기"
+    },
+    {
+      "tag": "Fryer",
+      "category": "튀김재료",
+      "title": "어떤 재료를 튀겨볼까?",
+      "actionLabel": "튀기기"
+    },
+    {
+      "tag": "Mixing",
+      "category": "반죽재료",
+      "title": "어떤 재료를 반죽할까?",
+      "actionLabel": "반죽하기"
+    }
+  ]
+}

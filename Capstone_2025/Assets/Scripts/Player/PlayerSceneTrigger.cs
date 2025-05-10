@@ -35,6 +35,12 @@ public class PlayerSceneTrigger : MonoBehaviour
             isInTrigger = true;
         }
 
+        if (other.name == "Village")
+        {
+            targetScene = "VillageScene"; // 이동할 씬 이름
+            isInTrigger = true;
+        }
+
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -58,6 +64,12 @@ public class PlayerSceneTrigger : MonoBehaviour
         }
 
         if (other.name == "MillStore")
+        {
+            targetScene = "";
+            isInTrigger = false;
+        }
+
+        if (other.name == "Village")
         {
             targetScene = "";
             isInTrigger = false;
