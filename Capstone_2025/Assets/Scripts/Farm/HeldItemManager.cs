@@ -10,6 +10,9 @@ public class HeldItemManager : MonoBehaviour
     public Image heldItemImage; // UI Image 오브젝트 (플레이어 머리 위)
     public Transform player;    // 플레이어 Transform
 
+    private Sprite currentHeldSprite;
+    private string heldItemName;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -17,7 +20,7 @@ public class HeldItemManager : MonoBehaviour
 
     private void LateUpdate()
     {// 들고 있는 아이템이 없으면 이미지 끄기
-        if (!BoxInventoryManager.Instance.IsHoldingItem())
+        if (!IsHoldingItem())
         {
             if (heldItemImage.enabled)
             {
@@ -35,8 +38,12 @@ public class HeldItemManager : MonoBehaviour
             //Debug.Log("HeldItemImage 위치: " + screenPos);
         }
     }
+    public string GetHeldItemName()
+    {
+        return heldItemName;
+    }
 
-    public void ShowHeldItem(Sprite sprite)
+    public void ShowHeldItem(Sprite sprite, string itemName = null)
     {
         if (sprite == null)
         {
@@ -48,13 +55,27 @@ public class HeldItemManager : MonoBehaviour
             Debug.LogError("heldItemImage가 연결되지 않았습니다! Inspector에서 Image를 드래그해 연결하세요.");
             return;
         }
+
+        currentHeldSprite = sprite;
+        heldItemName = itemName;
+
         heldItemImage.sprite = sprite;
         heldItemImage.enabled = true;
+
         Debug.Log("ShowHeldItem: 아이템 표시됨 - " + sprite.name);
     }
 
     public void HideHeldItem()
     {
         heldItemImage.enabled = false;
+        currentHeldSprite = null;
+        heldItemName = null;
     }
+
+    public bool IsHoldingItem()
+    {
+        return currentHeldSprite != null;
+    }
+
+
 }

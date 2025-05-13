@@ -12,7 +12,8 @@ public class VillagePlayerManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (BoxInventoryManager.Instance.IsHoldingItem())
+            if (BoxInventoryManager.Instance.IsInventoryOpen() &&
+                HeldItemManager.Instance.IsHoldingItem())
             {
                 BoxInventoryManager.Instance.TryAutoStoreHeldItem();
             }
@@ -23,7 +24,7 @@ public class VillagePlayerManager : MonoBehaviour
             if (currentItem.name == "wateringCan")
                 return;
 
-            if (BoxInventoryManager.Instance.IsHoldingItem())
+            if (HeldItemManager.Instance.IsHoldingItem())
             {
                 Debug.Log("이미 아이템이나 도구를 들고 있어서 새로운 것을 들 수 없습니다.");
                 return;
@@ -45,16 +46,31 @@ public class VillagePlayerManager : MonoBehaviour
                 farmManager.WaterSoil(pos1);
                 Debug.Log("물 뿌리기 완료");
             }
-            else if (BoxInventoryManager.Instance.IsHoldingItem() &&
-                     BoxInventoryManager.Instance.GetHeldItemName() == "seedBag" &&
-                     TryGetClickedFarmTile(out var pos2, out _))
+            else if (HeldItemManager.Instance.IsHoldingItem() &&
+         TryGetClickedFarmTile(out var pos2, out _) &&
+         !BoxInventoryManager.Instance.IsHoldingWateringCan())
             {
-                farmManager.PlantSeed(pos2);
-                Debug.Log("씨앗 뿌리기 완료");
-            }
-            else
-            {
-                Debug.Log("너무 멀거나 밭이 아닙니다. 물이나 씨앗을 사용할 수 없습니다.");
+                string seedItemName = HeldItemManager.Instance.GetHeldItemName();
+
+                if (!string.IsNullOrEmpty(seedItemName))
+                {
+                    CropData cropData = CropDataManager.Instance.GetCropDataByItemName(seedItemName);
+
+                    if (cropData != null)
+                    {
+                        farmManager.PlantSeed(pos2, cropData);
+                        Debug.Log($"씨앗 {seedItemName} 심기 완료");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"CropData를 찾을 수 없습니다: {seedItemName}");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("현재 들고 있는 씨앗 이름이 null 또는 빈 문자열입니다.");
+                }
+
             }
         }
     }

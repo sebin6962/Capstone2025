@@ -12,6 +12,7 @@ public class CropStage
 [CreateAssetMenu(menuName = "Crop/Crop Data")]
 public class CropData : ScriptableObject
 {
-    public string cropName;
+    public string cropName;         // 씨앗 이름 (예: RiceCrop)
+    public string harvestItemName;  // 수확물 이름 (예: Rice)
     public List<CropStage> stages;
 }

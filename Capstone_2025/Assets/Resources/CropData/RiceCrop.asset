@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7aad6937d7c49354ca2d55788d00a405, type: 3}
-  m_Name: TestCrop
+  m_Name: RiceCrop
   m_EditorClassIdentifier: 
-  cropName: Rice
+  cropName: RiceCrop
+  harvestItemName: Rice
   stages:
   - sprite: {fileID: 21300000, guid: c3a80fffdfe51424cb2951d05f064380, type: 3}
-    timeToNextStage: 5
+    timeToNextStage: 2
   - sprite: {fileID: 21300000, guid: 0f8109124b9c708499e16e03241bde48, type: 3}
-    timeToNextStage: 5
+    timeToNextStage: 2
   - sprite: {fileID: 21300000, guid: d327647372430794aa31b93df6a9d9ad, type: 3}
-    timeToNextStage: 5
+    timeToNextStage: 2
   - sprite: {fileID: 21300000, guid: 4fe155953f762fc4f8bd2cda16610882, type: 3}
-    timeToNextStage: 5
+    timeToNextStage: 2
   - sprite: {fileID: 21300000, guid: d0aab9cea28910a4fb275b4d7775a807, type: 3}
-    timeToNextStage: 5
+    timeToNextStage: 2

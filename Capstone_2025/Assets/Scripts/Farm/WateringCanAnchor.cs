@@ -25,7 +25,7 @@ public class WateringCanAnchor : MonoBehaviour
     {
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
         {
-            if (!BoxInventoryManager.Instance.IsHoldingItem())
+            if (!HeldItemManager.Instance.IsHoldingItem())
             {
                 GameObject canInstance = Instantiate(wateringCanPrefab); // 복제본 생성
                 BoxInventoryManager.Instance.HoldItem(canInstance);
@@ -37,7 +37,7 @@ public class WateringCanAnchor : MonoBehaviour
 
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.Space))
         {
-            if (BoxInventoryManager.Instance.IsHoldingItem() &&
+            if (HeldItemManager.Instance.IsHoldingItem() &&
         BoxInventoryManager.Instance.IsHoldingWateringCan())
             {
                 RestoreWateringCan();

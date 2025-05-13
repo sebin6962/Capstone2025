@@ -14,78 +14,63 @@ public class InventorySlot : MonoBehaviour
 
     public void OnClick()
     {
-        bool slotHasItem = HasItem();
-        bool isHolding = BoxInventoryManager.Instance.IsHoldingItem();
-        string heldName = BoxInventoryManager.Instance.GetHeldItemName();
+        bool isHolding = HeldItemManager.Instance.IsHoldingItem();
+        string heldName = HeldItemManager.Instance.GetHeldItemName();
 
         // [1] 손에 없음 → 슬롯에서 아이템 집기
-        if (!isHolding && slotHasItem)
+        if (!isHolding && HasItem())
         {
-            // 수량이 2 이상이면 분리 → 손에 1개만, 슬롯에 -1
             if (GetItemCount() > 1)
             {
-                // 손에 1개 전달
                 BoxInventoryManager.Instance.HoldItemFromSlot(GetSprite(), GetItemName());
-
-                // 슬롯 수량 -1
                 SetItem(GetSprite(), GetItemName(), GetItemCount() - 1);
-
-                BoxInventoryManager.Instance.SaveInventory();
             }
             else
             {
-                // 수량이 1이면 기존처럼 전부 들기
                 BoxInventoryManager.Instance.PickUpFromSlot(this);
             }
 
+            BoxInventoryManager.Instance.SaveInventory();
             return;
         }
 
-        // [2] 손에 아이템 있음
+        // [2] 손에 아이템 있음 → 인벤토리에 자동저장처럼 처리
         if (isHolding)
         {
-            // [2-1] 같은 아이템 → 수량 증가
-            if (slotHasItem && heldName == GetItemName())
+            // [2-1] 도구는 저장 불가
+            if (ToolData.Instance != null && ToolData.Instance.IsTool(heldName))
             {
-                int newCount = GetItemCount() + 1;
-                SetItem(GetSprite(), heldName, newCount);
-                BoxInventoryManager.Instance.RemoveHeldItem();
-                BoxInventoryManager.Instance.SaveInventory();
+                Debug.Log("도구는 저장할 수 없습니다: " + heldName);
                 return;
             }
 
-            // [2-2] 빈 슬롯
-            if (!slotHasItem)
+            // [2-2] 기존 슬롯에 있는 경우 수량 +1
+            foreach (var slot in BoxInventoryManager.Instance.slots)
             {
-                // 인벤토리에 같은 아이템이 이미 있는지 확인
-                bool existsInOtherSlot = false;
-
-                foreach (var other in BoxInventoryManager.Instance.slots)
+                if (slot.HasItem() && slot.GetItemName() == heldName)
                 {
-                    if (other != this && other.HasItem() && other.GetItemName() == heldName)
-                    {
-                        existsInOtherSlot = true;
-                        break;
-                    }
-                }
-
-                // [2-2-1] 인벤토리에 없음 → 새로 저장
-                if (!existsInOtherSlot)
-                {
-                    SetItem(BoxInventoryManager.Instance.GetHeldSprite(), heldName, 1);
+                    slot.SetItem(slot.GetSprite(), heldName, slot.GetItemCount() + 1);
                     BoxInventoryManager.Instance.RemoveHeldItem();
                     BoxInventoryManager.Instance.SaveInventory();
+                    Debug.Log("슬롯 클릭: 기존 슬롯에 자동 추가됨");
+                    return;
                 }
-                else
-                {
-                    Debug.Log("같은 아이템이 다른 슬롯에 있어 무시됨");
-                }
-
-                return;
             }
 
-            // [2-3] 다른 아이템이 있는 슬롯 → 무시
-            Debug.Log("다른 아이템이 있어 무시됨");
+            // [2-3] 빈 슬롯에 저장
+            foreach (var slot in BoxInventoryManager.Instance.slots)
+            {
+                if (!slot.HasItem())
+                {
+                    slot.SetItem(BoxInventoryManager.Instance.GetHeldSprite(), heldName, 1);
+                    BoxInventoryManager.Instance.RemoveHeldItem();
+                    BoxInventoryManager.Instance.SaveInventory();
+                    Debug.Log("슬롯 클릭: 빈 슬롯에 저장됨");
+                    return;
+                }
+            }
+
+            Debug.Log("슬롯 클릭: 저장 실패 - 슬롯 부족");
         }
     }
 
@@ -99,8 +84,14 @@ public class InventorySlot : MonoBehaviour
 
         itemImage.sprite = sprite;
         itemImage.enabled = true;
-        itemName = string.IsNullOrEmpty(name) ? sprite.name : name;
+        itemName = string.IsNullOrEmpty(name) ? sprite.name.Replace("(Clone)", "").Trim() : name.Replace("(Clone)", "").Trim();
         this.count = count;
+
+        if (count <= 0)
+        {
+            ClearSlot(); // 완전 제거
+            return;
+        }
 
         UpdateUI();
 

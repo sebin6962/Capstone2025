@@ -20,7 +20,7 @@ public class StorageInventorySlot : MonoBehaviour
 
     private bool isSelected = false;
 
-    public void SetItem(Sprite sprite, int count)
+    public void SetItem(string itemKey, Sprite sprite, int count)
     {
         if (sprite == null)
         {
@@ -30,7 +30,7 @@ public class StorageInventorySlot : MonoBehaviour
         }
 
         itemSprite = sprite;
-        itemName = sprite.name;
+        itemName = itemKey;
         itemImage.sprite = sprite;
         itemImage.enabled = true;
 

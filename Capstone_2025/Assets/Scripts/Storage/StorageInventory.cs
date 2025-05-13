@@ -39,10 +39,24 @@ public class StorageInventory : MonoBehaviour
 
     public void AddItem(string itemName, int amount)
     {
+        //if (storage.ContainsKey(itemName))
+        //    storage[itemName] += amount;
+        //else
+        //    storage[itemName] = amount;
+
         if (storage.ContainsKey(itemName))
+        {
             storage[itemName] += amount;
-        else
+
+            // 수량이 0 이하가 되면 제거
+            if (storage[itemName] <= 0)
+                storage.Remove(itemName);
+        }
+        else if (amount > 0)
+        {
+            // 새로 추가할 땐 amount가 양수일 때만 허용
             storage[itemName] = amount;
+        }
 
         Debug.Log($"[창고] {itemName} x{amount} 추가됨. 총합: {storage[itemName]}");
 

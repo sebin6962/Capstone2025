@@ -1,0 +1,19 @@
+{
+  "recipes": [
+    {
+      "makerId": "Sieve01",
+      "ingredients": ["Mepssalgaru"],
+      "resultSprite": "Sieve_Mepssalgaru"
+    },
+    {
+      "makerId": "Sieve02",
+      "ingredients": ["Mepssalgaru"],
+      "resultSprite": "Sieve_Mepssalgaru"
+    },
+    {
+      "makerId": "Sieve03",
+      "ingredients": ["Mepssalgaru"],
+      "resultSprite": "Sieve_Mepssalgaru"
+    }
+  ]
+}

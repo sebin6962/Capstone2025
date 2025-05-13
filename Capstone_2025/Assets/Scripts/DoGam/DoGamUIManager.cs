@@ -125,7 +125,7 @@ public class DoGamUIManager : MonoBehaviour
         descriptionText.text = entry.description;
         recipeText.text = string.Join("\n", entry.recipe);
 
-        itemImage.sprite = Resources.Load<Sprite>("Sprites/" + entry.image);
+        itemImage.sprite = Resources.Load<Sprite>("Sprites/Dagwa/" + entry.image);
     }
 
     public void ShowEntry(int index)
@@ -137,7 +137,7 @@ public class DoGamUIManager : MonoBehaviour
         nameText.text = entry.name;
         descriptionText.text = entry.description;
         recipeText.text = string.Join("\n", entry.recipe);
-        itemImage.sprite = Resources.Load<Sprite>("Sprites/" + entry.image);
+        itemImage.sprite = Resources.Load<Sprite>("Sprites/Dagwa/" + entry.image);
     }
 
     public void FilterByCategory(string category)

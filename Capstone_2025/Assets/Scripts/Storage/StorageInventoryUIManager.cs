@@ -36,14 +36,14 @@ public class StorageInventoryUIManager : MonoBehaviour
         {
             if (i >= slots.Count) break;
 
-            Sprite sprite = Resources.Load<Sprite>("Sprites/" + pair.Key);
+            Sprite sprite = Resources.Load<Sprite>("Sprites/Ingredients/" + pair.Key);
             if (sprite == null)
             {
                 Debug.LogWarning($"스프라이트 로드 실패: {pair.Key}");
                 continue;
             }
 
-            slots[i].SetItem(sprite, pair.Value);
+            slots[i].SetItem(pair.Key, sprite, pair.Value);
             i++;
         }
     }

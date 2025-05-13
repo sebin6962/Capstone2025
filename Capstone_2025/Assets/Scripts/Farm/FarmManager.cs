@@ -110,27 +110,48 @@ public class FarmManager : MonoBehaviour
     }
 
     //씨앗 뿌렸을 때 변화
-    public void PlantSeed(Vector3 worldPos)
+    //public void PlantSeed(Vector3 worldPos)
+    //{
+    //    Vector3Int cellPos = fieldTilemap.WorldToCell(worldPos);
+
+    //    if (!IsFarmTile(worldPos) || growingTiles.ContainsKey(cellPos))
+    //        return;
+
+    //    // 젖은 흙 여부도 검사하려면 여기 추가
+
+    //    // 덮을 스프라이트 생성 (기존 seedOverlayTilemap 쓰려면 TileBase 스프라이트 처리 필요)
+    //    Vector3 overlayWorldPos = overlayTilemap.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0f);
+    //    GameObject overlay = Instantiate(cropOverlayPrefab, overlayWorldPos, Quaternion.identity, transform);
+    //    overlay.GetComponent<SpriteRenderer>().sprite = testCropData.stages[0].sprite;
+
+    //    var cropInfo = new CropTile(cellPos, testCropData, overlay);
+
+    //    // 이미 물 준 곳이면 바로 성장 시작
+    //    if (wateredTiles.Contains(cellPos))
+    //    {
+    //        cropInfo.isWatered = true;
+    //        Debug.Log($"씨앗이 심어진 타일 {cellPos}은 이미 물이 있음 → 즉시 성장 시작");
+    //    }
+
+    //    growingTiles.Add(cellPos, cropInfo);
+    //}
+
+    public void PlantSeed(Vector3 worldPos, CropData cropData)
     {
         Vector3Int cellPos = fieldTilemap.WorldToCell(worldPos);
 
         if (!IsFarmTile(worldPos) || growingTiles.ContainsKey(cellPos))
             return;
 
-        // 젖은 흙 여부도 검사하려면 여기 추가
-
-        // 덮을 스프라이트 생성 (기존 seedOverlayTilemap 쓰려면 TileBase 스프라이트 처리 필요)
         Vector3 overlayWorldPos = overlayTilemap.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0f);
         GameObject overlay = Instantiate(cropOverlayPrefab, overlayWorldPos, Quaternion.identity, transform);
-        overlay.GetComponent<SpriteRenderer>().sprite = testCropData.stages[0].sprite;
+        overlay.GetComponent<SpriteRenderer>().sprite = cropData.stages[0].sprite;
 
-        var cropInfo = new CropTile(cellPos, testCropData, overlay);
+        var cropInfo = new CropTile(cellPos, cropData, overlay);
 
-        // 이미 물 준 곳이면 바로 성장 시작
         if (wateredTiles.Contains(cellPos))
         {
             cropInfo.isWatered = true;
-            Debug.Log($"씨앗이 심어진 타일 {cellPos}은 이미 물이 있음 → 즉시 성장 시작");
         }
 
         growingTiles.Add(cellPos, cropInfo);
@@ -179,6 +200,7 @@ public class FarmManager : MonoBehaviour
 
     private void HarvestCrop(Vector3Int pos, string cropName)
     {
+        var cropData = growingTiles[pos].cropData;
         // 작물 스프라이트 제거
         if (growingTiles[pos].cropOverlayObject != null)
             Destroy(growingTiles[pos].cropOverlayObject);
@@ -189,11 +211,14 @@ public class FarmManager : MonoBehaviour
         // 상태 제거
         growingTiles.Remove(pos);
 
+        string itemKey = cropData.harvestItemName; // 수확물 이름 사용
         // 창고 인벤토리에 추가
-        StorageInventory.Instance.AddItem(cropName, 1);
+        StorageInventory.Instance.AddItem(cropData.harvestItemName, 1);
 
         // 스프라이트 가져오기
-        Sprite cropSprite = Resources.Load<Sprite>("Sprites/" + cropName);
+        //Sprite cropSprite = Resources.Load<Sprite>("Sprites" + cropName);
+
+        Sprite cropSprite = Resources.Load<Sprite>("Sprites/" + itemKey); // 수확물 스프라이트 로드
 
         // 이 타일의 월드 위치 기준
         Vector3 worldPos = fieldTilemap.CellToWorld(pos) + new Vector3(0.5f, 0.5f, 0);

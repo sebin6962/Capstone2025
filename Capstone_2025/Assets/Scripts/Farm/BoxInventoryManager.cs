@@ -51,24 +51,25 @@ public class BoxInventoryManager : MonoBehaviour
                heldItemName == toolName;
     }
 
+    //public bool IsHoldingWateringCan()
+    //{
+    //    if (!IsHoldingItem()) return false;
+    //    if (heldItemName != "wateringCan") return false;
+    //    if (ToolData.Instance == null) return false;
+    //    return ToolData.Instance.IsTool(heldItemName);
+    //    // return IsHoldingTool("wateringCan");
+    //}
+
     public bool IsHoldingWateringCan()
     {
-        if (!IsHoldingItem()) return false;
-        if (heldItemName != "wateringCan") return false;
-        if (ToolData.Instance == null) return false;
-        return ToolData.Instance.IsTool(heldItemName);
-        // return IsHoldingTool("wateringCan");
+        if (!HeldItemManager.Instance.IsHoldingItem()) return false;
+
+        string name = HeldItemManager.Instance.GetHeldItemName();
+        if (string.IsNullOrEmpty(name)) return false;
+
+        return name == "wateringCan" && ToolData.Instance != null && ToolData.Instance.IsTool(name);
     }
 
-    public bool IsHoldingItem()
-    {
-        return heldSprite != null;
-    }
-
-    public string GetHeldItemName()
-    {
-        return heldItemName;
-    }
 
     public void RemoveHeldItem()
     {
@@ -86,9 +87,10 @@ public class BoxInventoryManager : MonoBehaviour
         if (spriteRenderer != null)
         {
             heldSprite = spriteRenderer.sprite;
-            heldItemName = heldSprite.name;
+            //heldItemName = item.name;
+            heldItemName = item.name.Replace("(Clone)", "").Trim();
 
-            HeldItemManager.Instance.ShowHeldItem(heldSprite);
+            HeldItemManager.Instance.ShowHeldItem(heldSprite, heldItemName);
 
             Debug.Log($"[DEBUG] 들고 있는 아이템 이름: {heldItemName}");
             Debug.Log($"[DEBUG] IsTool: {ToolData.Instance.IsTool(heldItemName)}");
@@ -152,7 +154,7 @@ public class BoxInventoryManager : MonoBehaviour
         heldItem = null;
 
         slot.ClearSlot();
-        HeldItemManager.Instance.ShowHeldItem(heldSprite);
+        HeldItemManager.Instance.ShowHeldItem(heldSprite, heldItemName);
 
         Debug.Log("인벤토리에서 아이템 다시 듦: " + heldItemName);
         SaveInventory();
@@ -191,7 +193,7 @@ public class BoxInventoryManager : MonoBehaviour
             var item = data.items[i];
             if (!string.IsNullOrEmpty(item.itemName) && item.count > 0)
             {
-                Sprite sprite = Resources.Load<Sprite>("Sprites/" + item.itemName);
+                Sprite sprite = Resources.Load<Sprite>("Sprites/SeedBags/" + item.itemName);
                 slots[i].SetItem(sprite, item.itemName, item.count);
             }
             else
@@ -215,8 +217,8 @@ public class BoxInventoryManager : MonoBehaviour
         heldItemName = itemName;
         heldItem = null;
 
-        HeldItemManager.Instance.ShowHeldItem(heldSprite);
-
+        // 이름도 전달하도록 수정
+        HeldItemManager.Instance.ShowHeldItem(heldSprite, heldItemName);
         Debug.Log($"[분리] 슬롯에서 {itemName} 1개만 손에 듬");
     }
 

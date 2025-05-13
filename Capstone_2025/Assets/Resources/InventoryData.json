@@ -1,7 +1,12 @@
 [
   {
-    "id": "seedBag",
-    "name": "seedBag",
-    "spritePath": "Sprites/seedBag"
+    "id": "seedBag_rice",
+    "name": "riceBag",
+    "spritePath": "Sprites/SeedBag_rice"
+  },
+  {
+    "id": "seedBag_mugwort",
+    "name": "mugwortBag",
+    "spritePath": "Sprites/SeedBag_mugwort"
   }
 ]

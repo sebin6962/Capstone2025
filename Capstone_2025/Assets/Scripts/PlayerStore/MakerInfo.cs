@@ -5,7 +5,7 @@ using UnityEngine;
 public class MakerInfo : MonoBehaviour
 {
     public string makerId;
-
+    public GameObject currentResultObject; // 결과 오브젝트 추적용
     // Start is called before the first frame update
     void Start()
     {
