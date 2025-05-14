@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MarketScene.unity
     guid: 391848bec106d024990adf2686e7e824
+  - enabled: 1
+    path: Assets/Scenes/ReceiptScene.unity
+    guid: 054fb2cdf3caab44c82182ea6891dc23
   m_configObjects: {}

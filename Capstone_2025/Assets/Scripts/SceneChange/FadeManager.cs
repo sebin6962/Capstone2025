@@ -50,6 +50,7 @@ public class FadeManager : MonoBehaviour
         if (delay > 0f)
             yield return new WaitForSeconds(delay);
 
+        TimeManager.Instance?.SaveDayData();
         SceneManager.LoadScene(sceneName);
         yield return null; // 씬 완전히 로드될 때까지 1프레임 대기
 
