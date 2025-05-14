@@ -86,7 +86,7 @@ public class DoGamUIManager : MonoBehaviour
 
     void LoadDoGamDataFromJSON()
     {
-        TextAsset json = Resources.Load<TextAsset>("DoGamData");
+        TextAsset json = Resources.Load<TextAsset>("Data/DoGamData");
         var data = JsonUtility.FromJson<DoGamEntryList>(json.text);
 
         doGamDict = new Dictionary<string, DoGamEntry>();
