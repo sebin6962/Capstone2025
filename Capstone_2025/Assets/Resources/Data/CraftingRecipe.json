@@ -2,12 +2,12 @@
   "recipes": [
     {
       "makerId": "Sieve01",
-      "ingredients": ["Mepssalgaru"],
+      "ingredients": [ "Mepssalgaru" ],
       "resultSprite": "Sieve_Mepssalgaru"
     },
     {
       "makerId": "Sieve02",
-      "ingredients": ["Mepssalgaru"],
+      "ingredients": [ "Mepssalgaru" ],
       "resultSprite": "Sieve_Mepssalgaru"
     },
     {
@@ -17,13 +17,33 @@
     },
     {
       "makerId": "Mixing01",
-      "ingredients": [ "Sieve_Mepssalgaru", "Sugar", "Salt" ],
+      "ingredients": [ "Sieve_Mepssalgaru", "Water" ],
+      "resultSprite": "Mixing_Mepssalgaru"
+    },
+    {
+      "makerId": "Mixing01",
+      "ingredients": [ "Sieve_Mepssalgaru", "Water", "Mugwort" ],
+      "resultSprite": "Mixing_Mugwort_Mepssalgaru"
+    },
+    {
+      "makerId": "Mixing01",
+      "ingredients": [ "Sieve_Mepssalgaru", "Water", "Danhobak" ],
+      "resultSprite": "Mixing_Mugwort_Mepssalgaru"
+    },
+    {
+      "makerId": "Mixing02",
+      "ingredients": [ "Sieve_Mepssalgaru", "Water" ],
       "resultSprite": "Mixing_Mepssalgaru"
     },
     {
       "makerId": "Mixing02",
-      "ingredients": [ "Sieve_Mepssalgaru", "Sugar", "Salt" ],
-      "resultSprite": "Mixing_Mepssalgaru"
+      "ingredients": [ "Sieve_Mepssalgaru", "Water", "Mugwort" ],
+      "resultSprite": "Mixing_Mugwort_Mepssalgaru"
+    },
+    {
+      "makerId": "Mixing02",
+      "ingredients": [ "Sieve_Mepssalgaru", "Water", "Danhobak" ],
+      "resultSprite": "Mixing_Mugwort_Mepssalgaru"
     },
     {
       "makerId": "Siru01",

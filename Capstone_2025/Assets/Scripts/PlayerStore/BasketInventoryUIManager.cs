@@ -26,6 +26,8 @@ public class BasketInventoryUIManager : MonoBehaviour
     public RectTransform progressBarPrefab;
     public GameObject resultItemPrefab;
     public Transform worldCanvasParent;
+    bool isWaterSelected = false;
+    public WaterButtonSlot waterButtonUI;
 
     private void Awake()
     {
@@ -51,6 +53,15 @@ public class BasketInventoryUIManager : MonoBehaviour
     {
         basketPanel.SetActive(false);
         IsOpen = false;
+
+        isWaterSelected = false;
+        if (waterButtonUI != null) waterButtonUI.Deselect();
+
+        // 모든 슬롯 선택 해제
+        foreach (var slot in slots)
+        {
+            slot.Deselect();
+        }
     }
 
     private void LateUpdate()
@@ -147,54 +158,67 @@ public class BasketInventoryUIManager : MonoBehaviour
 
     public void StartCrafting(MakerInfo maker)
     {
-        // 선택된 아이템 이름 리스트 생성
-        List<string> selectedItemNames = new();
-        foreach (int idx in selectedSlotIndices)
-        {
-            selectedItemNames.Add(slots[idx].itemName);
+        Debug.Log($"[StartCrafting 호출] 전달된 Maker = {maker.name}, makerId = {maker.makerId}");
+        bool includeWater = isWaterSelected;
 
-            if (!string.IsNullOrEmpty(name))
-                selectedItemNames.Add(name);
+        List<string> selectedItemNames = new();
+
+        foreach (var slot in slots)
+        {
+            if (slot.IsSelected() && !string.IsNullOrEmpty(slot.itemName))
+            {
+                selectedItemNames.Add(slot.itemName);
+            }
         }
 
-        if (selectedSlotIndices.Count == 0)
+        // 물 버튼이 선택되어 있으면 물도 재료로 추가
+        if (includeWater)
+        {
+            selectedItemNames.Add("water");
+            Debug.Log("[제작] 물이 선택됨 → water 추가됨");
+        }
+
+        if (selectedItemNames.Count == 0)
+        {
+            Debug.LogWarning("[제작 실패] 선택된 재료 없음");
+            return;
+        }
+
+        if (selectedItemNames.Count == 0)
         {
             Debug.LogWarning("[제작 실패] 선택된 아이템 없음");
             return;
         }
 
-        // 슬롯에서 이름 및 스프라이트 추출
-        int selectedSlotIndex = selectedSlotIndices[0];
-        string resultItemName = slots[selectedSlotIndex].itemName;
-        Sprite resultSprite = slots[selectedSlotIndex].itemSprite;
+        Sprite resultSprite = CraftingRecipeManager.Instance.GetResultSprite(maker.makerId, selectedItemNames);
 
-        // 유효한 아이템인지 검사
-        if (string.IsNullOrEmpty(resultItemName))
+        if (resultSprite == null)
         {
-            Debug.LogWarning("[제작 실패] 유효하지 않은 아이템입니다");
+            Debug.LogWarning("[제작 실패] 일치하는 레시피 없음");
             return;
         }
 
-        // 재료 제거
-        foreach (int idx in selectedSlotIndices)
+        foreach (var slot in slots)
         {
-            string name = slots[idx].itemName;
-            int removeIndex = currentBasket.itemNames.IndexOf(name);
-            if (removeIndex != -1)
+            if (slot.IsSelected())
             {
-                currentBasket.itemNames.RemoveAt(removeIndex);
-                currentBasket.itemSprites.RemoveAt(removeIndex);
+                int removeIndex = currentBasket.itemNames.IndexOf(slot.itemName);
+                if (removeIndex != -1)
+                {
+                    currentBasket.itemNames.RemoveAt(removeIndex);
+                    currentBasket.itemSprites.RemoveAt(removeIndex);
+                }
+                slot.Deselect();
             }
-            currentBasket.Save();
-            selectedSlotIndices.Clear();
-            UpdateUI();
-            CloseBasketUI();
-
-            StartCoroutine(ShowProgressAndSpawnItem(maker, selectedItemNames));
         }
+
+        currentBasket.Save();
+        UpdateUI();
+        CloseBasketUI();
+        StartCoroutine(ShowProgressAndSpawnItem(maker, resultSprite));
     }
 
-    private IEnumerator ShowProgressAndSpawnItem(MakerInfo maker, List<string> selectedItemNames)
+    private IEnumerator ShowProgressAndSpawnItem(MakerInfo maker, Sprite resultSprite)
     {
         Transform makerTransform = maker.transform;
 
@@ -228,7 +252,7 @@ public class BasketInventoryUIManager : MonoBehaviour
         Vector3 progressBarPos = progressBar.position;
         Destroy(progressBar.gameObject);
 
-        Sprite resultSprite = CraftingRecipeManager.Instance.GetResultSprite(maker.makerId, selectedItemNames);
+        //Sprite resultSprite = CraftingRecipeManager.Instance.GetResultSprite(maker.makerId, selectedItemNames);
 
         if (resultSprite == null)
         {
@@ -243,6 +267,7 @@ public class BasketInventoryUIManager : MonoBehaviour
         {
             sr.sprite = resultSprite;
         }
+
         else
         {
             Debug.LogError("[제작 오류] SpriteRenderer가 프리팹에 없습니다!");
@@ -284,4 +309,21 @@ public class BasketInventoryUIManager : MonoBehaviour
     {
         selectedSlotIndices.Remove(slotIndex);
     }
+
+    public void OnWaterButtonClick()
+    {
+        Debug.Log("[물 버튼 눌림]");
+
+        if (isWaterSelected)
+        {
+            isWaterSelected = false;
+            waterButtonUI.Deselect();
+        }
+        else
+        {
+            isWaterSelected = true;
+            waterButtonUI.Select();
+        }
+    }
+
 }

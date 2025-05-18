@@ -43,21 +43,15 @@ public class BasketInventorySlot : MonoBehaviour
 
         countText.text = "";
         countText.enabled = false;
+
+        isSelected = false;
+        UpdateBackground();
     }
 
     private void OnClick()
-    {
-        //if (BasketInventoryUIManager.Instance != null &&
-        //BasketInventoryUIManager.Instance.CanSelectSlot())
-        //{
-        //    isSelected = !isSelected;
-        //    UpdateBackground();
-
-        //    if (isSelected)
-        //        BasketInventoryUIManager.Instance.OnItemSelected(itemName, slotIndex);
-        //    else
-        //        BasketInventoryUIManager.Instance.OnItemDeselected(itemName, slotIndex);
-        //}
+    {// 마우스 클릭이 아닌 다른 입력은 무시
+        if (!Input.GetMouseButtonUp(0)) return;
+        if (itemSprite == null || string.IsNullOrEmpty(itemName)) return;
         // 항상 호출: 제작기든 상자든 상황에 따라 처리
         if (BasketInventoryUIManager.Instance != null)
         {
@@ -80,5 +74,10 @@ public class BasketInventorySlot : MonoBehaviour
     {
         isSelected = false;
         UpdateBackground();
+    }
+
+    public bool IsSelected()
+    {
+        return isSelected;
     }
 }

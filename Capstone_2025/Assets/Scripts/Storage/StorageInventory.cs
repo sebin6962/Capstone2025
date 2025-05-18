@@ -44,23 +44,39 @@ public class StorageInventory : MonoBehaviour
         //else
         //    storage[itemName] = amount;
 
+        //if (storage.ContainsKey(itemName))
+        //{
+        //    storage[itemName] += amount;
+
+        //    // 수량이 0 이하가 되면 제거
+        //    if (storage[itemName] <= 0)
+        //        storage.Remove(itemName);
+        //}
+        //else if (amount > 0)
+        //{
+        //    // 새로 추가할 땐 amount가 양수일 때만 허용
+        //    storage[itemName] = amount;
+        //}
+
+        if (string.IsNullOrEmpty(itemName)) return;
+
         if (storage.ContainsKey(itemName))
         {
             storage[itemName] += amount;
 
-            // 수량이 0 이하가 되면 제거
             if (storage[itemName] <= 0)
+            {
                 storage.Remove(itemName);
+            }
         }
         else if (amount > 0)
         {
-            // 새로 추가할 땐 amount가 양수일 때만 허용
             storage[itemName] = amount;
         }
-
-        Debug.Log($"[창고] {itemName} x{amount} 추가됨. 총합: {storage[itemName]}");
-
-        SaveStorage();
+        else
+        {
+            Debug.LogWarning($"[StorageInventory] 없는 아이템 '{itemName}'에 음수 {amount} 추가 시도");
+        }
     }
 
     public int GetItemCount(string itemName)
@@ -98,6 +114,11 @@ public class StorageInventory : MonoBehaviour
         {
             Debug.Log("저장된 창고 없음. 새로 시작합니다.");
         }
+    }
+
+    public bool HasItem(string itemName)
+    {
+        return storage.ContainsKey(itemName);
     }
 
     public Dictionary<string, int> GetAllItems()

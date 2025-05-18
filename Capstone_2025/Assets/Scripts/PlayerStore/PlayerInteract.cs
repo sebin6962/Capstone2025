@@ -152,8 +152,13 @@ public class PlayerInteract : MonoBehaviour
         {
             if (isNearMaker && BasketInventoryUIManager.Instance.IsOpen)
             {
-                Debug.Log("[Space] 제작 시도");
+                if (currentMaker == null)
+                {
+                    Debug.LogWarning("[제작 실패] currentMaker가 null입니다!");
+                    return;
+                }
 
+                Debug.Log($"[Space] 제작 시도 - makerId: {currentMaker.makerId}");
                 BasketInventoryUIManager.Instance.StartCrafting(currentMaker);
                 return;
             }
