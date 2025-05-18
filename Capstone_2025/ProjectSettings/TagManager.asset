@@ -19,6 +19,9 @@ TagManager:
   - TreeEntry
   - MillStore
   - Market
+  - Basket
+  - BasketSpot
+  - StorageBox
   layers:
   - Default
   - TransparentFX

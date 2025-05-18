@@ -17,8 +17,9 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
     {
-        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen() ||
-        (PopupInventoryUIManager.Instance != null && PopupInventoryUIManager.Instance.IsPopupOpen()))
+        if ((BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen()) ||
+    (PopupInventoryUIManager.Instance != null && PopupInventoryUIManager.Instance.IsPopupOpen()) ||
+    (BasketInventoryUIManager.Instance != null && BasketInventoryUIManager.Instance.IsOpen)) // ← 추가
         {
             movement = Vector2.zero;
             return;
@@ -30,9 +31,12 @@ public class PlayerManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen() ||
-        (PopupInventoryUIManager.Instance != null && PopupInventoryUIManager.Instance.IsPopupOpen()))
+        if ((BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen()) ||
+    (PopupInventoryUIManager.Instance != null && PopupInventoryUIManager.Instance.IsPopupOpen()) ||
+    (BasketInventoryUIManager.Instance != null && BasketInventoryUIManager.Instance.IsOpen)) // ← 추가
+        {
             return;
+        }
 
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }

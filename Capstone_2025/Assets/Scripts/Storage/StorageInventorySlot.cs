@@ -9,16 +9,9 @@ public class StorageInventorySlot : MonoBehaviour
     public Image itemImage;
     public TextMeshProUGUI countText;
 
-    // 추가: 배경색 바꿀 Image
-    public Image background;
-    public Color selectedColor = new Color(1f, 0.9f, 0.6f); // 연한 노랑
-    public Color defaultColor = Color.white;
-
     //추가: 아이템 정보 저장용
     public string itemName;
     public Sprite itemSprite;
-
-    private bool isSelected = false;
 
     public void SetItem(string itemKey, Sprite sprite, int count)
     {
@@ -36,9 +29,6 @@ public class StorageInventorySlot : MonoBehaviour
 
         countText.text = (count > 1) ? count.ToString() : "";
         countText.enabled = true;
-
-        isSelected = false;
-        UpdateBackground();
     }
 
 
@@ -51,36 +41,21 @@ public class StorageInventorySlot : MonoBehaviour
 
         countText.text = "";
         countText.enabled = false;
-
-        isSelected = false;
-        UpdateBackground();
     }
 
     public void OnClick()
     {
-        // 아이템이 없으면 클릭 무시
-        if (itemSprite == null || string.IsNullOrEmpty(itemName))
-        {
-            Debug.LogWarning("[슬롯 클릭] 아이템이 없습니다. 무시됨.");
-            return;
-        }
+        if (itemSprite == null || string.IsNullOrEmpty(itemName)) return;
 
-        isSelected = !isSelected;
-        UpdateBackground();
-
-        if (isSelected)
+        // 바구니에 아이템 추가 시도
+        if (HeldItemManager.Instance.GetHeldItemName() == "basket" &&
+            BasketInventoryUIManager.Instance.IsOpen &&
+            BasketInventoryUIManager.Instance.TryAddItemToBasket(itemName, itemSprite))
         {
-            PopupInventoryUIManager.Instance.OnItemSelected(itemName, itemSprite);
-        }
-        else
-        {
-            PopupInventoryUIManager.Instance.OnItemDeselected(itemName);
-        }
-    }
+            StorageInventory.Instance.AddItem(itemName, -1); // 상자에서 제거
+            Debug.Log($"[이동] {itemName} 1개 → 바구니로 이동");
 
-    private void UpdateBackground()
-    {
-        if (background != null)
-            background.color = isSelected ? selectedColor : defaultColor;
+            PlayerStoreBoxInventoryUIManager.Instance.UpdateSlots(); // UI 갱신
+        }
     }
 }
