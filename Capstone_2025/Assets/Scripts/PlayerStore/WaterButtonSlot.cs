@@ -10,6 +10,7 @@ public class WaterButtonSlot : MonoBehaviour
     public Color defaultColor = Color.white;
 
     private bool isSelected = false;
+    public bool IsSelected() => isSelected; // 혹은 선택 상태를 저장하는 변수 이름
 
     public void Select()
     {

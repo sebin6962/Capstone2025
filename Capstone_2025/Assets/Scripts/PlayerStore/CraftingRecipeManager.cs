@@ -33,7 +33,7 @@ public class CraftingRecipeManager : MonoBehaviour
 
     }
 
-    public Sprite GetResultSprite(string makerId, List<string> selectedIngredients)
+    public Sprite GetResultSprite(string makerId, IEnumerable<string> selectedIngredients)
     {
         Debug.Log($"[레시피 매칭 시도] makerId = {makerId}, 재료 = {string.Join(", ", selectedIngredients)}");
 

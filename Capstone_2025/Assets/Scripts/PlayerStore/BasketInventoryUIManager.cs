@@ -159,34 +159,30 @@ public class BasketInventoryUIManager : MonoBehaviour
     public void StartCrafting(MakerInfo maker)
     {
         Debug.Log($"[StartCrafting 호출] 전달된 Maker = {maker.name}, makerId = {maker.makerId}");
-        bool includeWater = isWaterSelected;
+        bool includeWater = waterButtonUI != null && waterButtonUI.IsSelected();
 
-        List<string> selectedItemNames = new();
+        HashSet<string> selectedItemNames = new();
 
         foreach (var slot in slots)
         {
             if (slot.IsSelected() && !string.IsNullOrEmpty(slot.itemName))
             {
-                selectedItemNames.Add(slot.itemName);
+                selectedItemNames.Add(slot.itemName.Trim().ToLower());
             }
         }
 
-        // 물 버튼이 선택되어 있으면 물도 재료로 추가
         if (includeWater)
         {
-            selectedItemNames.Add("water");
-            Debug.Log("[제작] 물이 선택됨 → water 추가됨");
+            if (!selectedItemNames.Contains("water"))
+            {
+                selectedItemNames.Add("water");
+                Debug.Log("[제작] 물이 선택됨 → water 추가됨");
+            }
         }
 
         if (selectedItemNames.Count == 0)
         {
             Debug.LogWarning("[제작 실패] 선택된 재료 없음");
-            return;
-        }
-
-        if (selectedItemNames.Count == 0)
-        {
-            Debug.LogWarning("[제작 실패] 선택된 아이템 없음");
             return;
         }
 
@@ -214,8 +210,9 @@ public class BasketInventoryUIManager : MonoBehaviour
 
         currentBasket.Save();
         UpdateUI();
-        CloseBasketUI();
+        
         StartCoroutine(ShowProgressAndSpawnItem(maker, resultSprite));
+        CloseBasketUI();
     }
 
     private IEnumerator ShowProgressAndSpawnItem(MakerInfo maker, Sprite resultSprite)

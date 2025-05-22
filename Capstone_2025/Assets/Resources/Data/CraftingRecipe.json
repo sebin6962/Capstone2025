@@ -28,7 +28,12 @@
     {
       "makerId": "Mixing01",
       "ingredients": [ "Sieve_Mepssalgaru", "Water", "Danhobak" ],
-      "resultSprite": "Mixing_Mugwort_Mepssalgaru"
+      "resultSprite": "Mixing_Danhobak_Mepssalgaru"
+    },
+    {
+      "makerId": "Mixing01",
+      "ingredients": [ "Sieve_Mepssalgaru", "Water", "Baknyeoncho" ],
+      "resultSprite": "Mixing_Baknyeoncho_Mepssalgaru"
     },
     {
       "makerId": "Mixing02",
@@ -43,17 +48,42 @@
     {
       "makerId": "Mixing02",
       "ingredients": [ "Sieve_Mepssalgaru", "Water", "Danhobak" ],
-      "resultSprite": "Mixing_Mugwort_Mepssalgaru"
+      "resultSprite": "Mixing_Danhobak_Mepssalgaru"
+    },
+    {
+      "makerId": "Mixing02",
+      "ingredients": [ "Sieve_Mepssalgaru", "Water", "Baknyeoncho" ],
+      "resultSprite": "Mixing_Baknyeoncho_Mepssalgaru"
     },
     {
       "makerId": "Siru01",
       "ingredients": [ "Mixing_Mepssalgaru" ],
-      "resultSprite": "Siru_Mepssalgaru"
+      "resultSprite": "Baekseolgi"
+    },
+    {
+      "makerId": "Siru01",
+      "ingredients": [ "Mixing_Danhobak_Mepssalgaru" ],
+      "resultSprite": "Danhobakseolgi"
+    },
+    {
+      "makerId": "Siru01",
+      "ingredients": [ "Mixing_Danhobak_Mepssalgaru", "Mixing_Mepssalgaru", "Mixing_Mugwort_Mepssalgaru", "Mixing_Baknyeoncho_Mepssalgaru" ],
+      "resultSprite": "Rainbowseolgi"
     },
     {
       "makerId": "Siru02",
       "ingredients": [ "Mixing_Mepssalgaru" ],
-      "resultSprite": "Siru_Mepssalgaru"
+      "resultSprite": "Baekseolgi"
+    },
+    {
+      "makerId": "Siru02",
+      "ingredients": [ "Mixing_Danhobak_Mepssalgaru" ],
+      "resultSprite": "Danhobakseolgi"
+    },
+    {
+      "makerId": "Siru02",
+      "ingredients": [ "Mixing_Danhobak_Mepssalgaru", "Mixing_Mepssalgaru", "Mixing_Mugwort_Mepssalgaru", "Mixing_Baknyeoncho_Mepssalgaru" ],
+      "resultSprite": "Rainbowseolgi"
     }
   ]
 }

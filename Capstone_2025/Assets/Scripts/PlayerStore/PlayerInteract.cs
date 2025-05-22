@@ -17,7 +17,7 @@ public class PlayerInteract : MonoBehaviour
     public GameObject basketPrefab;        // 바구니 프리팹 (Inspector에서 연결)
 
     private StorageInventory nearbyStorage;
-
+    //private bool requestCrafting = false;
     private void Awake()
     {
         Instance = this;
@@ -152,16 +152,32 @@ public class PlayerInteract : MonoBehaviour
         {
             if (isNearMaker && BasketInventoryUIManager.Instance.IsOpen)
             {
-                if (currentMaker == null)
-                {
-                    Debug.LogWarning("[제작 실패] currentMaker가 null입니다!");
-                    return;
-                }
+                //if (currentMaker == null)
+                //{
+                //    Debug.LogWarning("[제작 실패] currentMaker가 null입니다!");
+                //    return;
+                //}
 
                 Debug.Log($"[Space] 제작 시도 - makerId: {currentMaker.makerId}");
-                BasketInventoryUIManager.Instance.StartCrafting(currentMaker);
+                StartCoroutine(DelayedCraftingRoutine());
                 return;
             }
+        }
+    }
+
+    private IEnumerator DelayedCraftingRoutine()
+    {
+        yield return null; // 1프레임 대기
+
+        if (currentMaker != null)
+        {
+            Debug.Log($"[지연된 제작 시도] makerId: {currentMaker.makerId}");
+            //BasketInventoryUIManager.Instance.ForceUpdateWaterState();
+            BasketInventoryUIManager.Instance.StartCrafting(currentMaker);
+        }
+        else
+        {
+            Debug.LogWarning("[지연된 제작 실패] currentMaker가 null입니다");
         }
     }
 
