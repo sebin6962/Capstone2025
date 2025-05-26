@@ -77,5 +77,9 @@ public class HeldItemManager : MonoBehaviour
         return currentHeldSprite != null;
     }
 
+    public Sprite GetHeldItemSprite()
+    {
+        return currentHeldSprite;
+    }
 
 }

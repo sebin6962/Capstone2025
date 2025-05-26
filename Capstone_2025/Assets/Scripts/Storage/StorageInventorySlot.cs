@@ -46,23 +46,6 @@ public class StorageInventorySlot : MonoBehaviour
     public void OnClick()
     {
         if (itemSprite == null || string.IsNullOrEmpty(itemName)) return;
-
-        // 바구니에 아이템 추가 시도
-        if (HeldItemManager.Instance.GetHeldItemName() == "basket" &&
-            BasketInventoryUIManager.Instance.IsOpen &&
-            BasketInventoryUIManager.Instance.TryAddItemToBasket(itemName, itemSprite))
-        {
-            StorageInventory.Instance.AddItem(itemName, -1); // 상자에서 제거
-
-            // 수량이 0이 되었는지 다시 검사
-            if (!StorageInventory.Instance.HasItem(itemName))
-            {
-                ClearSlot(); // 슬롯도 비움
-            }
-
-            Debug.Log($"[이동] {itemName} 1개 → 바구니로 이동");
-
-            PlayerStoreBoxInventoryUIManager.Instance.UpdateSlots(); // UI 갱신
-        }
+        PlayerStoreBoxInventoryUIManager.Instance.OnItemSelected(itemName, itemSprite);
     }
 }

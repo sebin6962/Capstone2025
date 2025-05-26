@@ -33,6 +33,23 @@ public class TimeManager : MonoBehaviour
     void Start()
     {
         LoadDay();
+
+        // VillageScene에서만 동작 (혹시 모르니 Scene 체크)
+        if (SceneManager.GetActiveScene().name == "VillageScene")
+        {
+            // StatementScene에서만 플래그 ON
+            int isNextDay = PlayerPrefs.GetInt("NextDayFlag", 0);
+            if (isNextDay == 1)
+            {
+                currentDay++;
+                hour = 9;
+                minute = 0;
+                SaveDayData();
+                // 플래그 리셋
+                PlayerPrefs.SetInt("NextDayFlag", 0);
+            }
+            // else : 플래그가 없으면 날짜/시간 그대로 유지
+        }
         UpdateDayUI();
         UpdateClockProgressUI();
     }
@@ -101,9 +118,9 @@ public class TimeManager : MonoBehaviour
         currentDay++; // 하루 종료 후 다음 날
 
         if (FadeManager.Instance != null)
-            FadeManager.Instance.FadeToScene("ReceiptScene");
+            FadeManager.Instance.FadeToScene("StatementScene");
         else
-            SceneManager.LoadScene("ReceiptScene");
+            SceneManager.LoadScene("StatementScene");
     }
 
     public void SaveDayData()
@@ -116,6 +133,15 @@ public class TimeManager : MonoBehaviour
             minute = minute
         };
         File.WriteAllText(path, JsonUtility.ToJson(data));
+    }
+    void OnApplicationQuit()
+    {
+        SaveDayData();
+    }
+
+    void OnDisable()
+    {
+        SaveDayData();
     }
 }
 

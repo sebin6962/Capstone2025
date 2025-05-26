@@ -14,7 +14,7 @@ public class PlayerStoreBoxInventoryUIManager : MonoBehaviour
 
     private StorageInventory currentInventory;
 
-    private string selectedItemName = null;
+    //private string selectedItemName = null;
 
     private void Awake()
     {
@@ -29,7 +29,7 @@ public class PlayerStoreBoxInventoryUIManager : MonoBehaviour
     {
         currentInventory = storage;
         panel.SetActive(true);
-        selectedItemName = null;
+        //selectedItemName = null;
         UpdateSlots();
     }
 
@@ -37,7 +37,7 @@ public class PlayerStoreBoxInventoryUIManager : MonoBehaviour
     {
         panel.SetActive(false);
         currentInventory = null;
-        selectedItemName = null;
+        //selectedItemName = null;
     }
 
     public bool IsOpen()
@@ -69,25 +69,29 @@ public class PlayerStoreBoxInventoryUIManager : MonoBehaviour
 
     public void OnItemSelected(string itemName, Sprite sprite)
     {
-        selectedItemName = itemName;
-
-        // 바구니가 열려 있고, 아이템 추가에 성공했다면
-        if (BasketInventoryUIManager.Instance.IsOpen &&
-            HeldItemManager.Instance.GetHeldItemName() == "basket" &&
-            BasketInventoryUIManager.Instance.TryAddItemToBasket(itemName, sprite))
+        // 아무것도 안 들고 있을 때만!
+        if (!HeldItemManager.Instance.IsHoldingItem())
         {
-            // 상자 인벤토리에서 아이템 1개 차감
-            currentInventory.AddItem(itemName, -1);
-            Debug.Log($"[이동] {itemName} 1개 → 바구니로 이동");
-
-            UpdateSlots(); // 상자 UI 갱신
-            BasketInventoryUIManager.Instance.UpdateUI(); // 바구니 UI 갱신
+            // 재고 있는지 체크
+            if (currentInventory.GetItemCount(itemName) > 0)
+            {
+                currentInventory.AddItem(itemName, -1);
+                currentInventory.SaveStorage();
+                HeldItemManager.Instance.ShowHeldItem(sprite, itemName);
+                Debug.Log($"[인벤토리] {itemName} 1개 소지 시작");
+                UpdateSlots();
+            }
+            else
+            {
+                Debug.LogWarning($"{itemName} 재고가 부족합니다.");
+            }
         }
         else
         {
-            Debug.LogWarning($"[이동 실패] {itemName} 을 바구니로 이동할 수 없습니다.");
+            Debug.Log("이미 다른 아이템을 들고 있음. 먼저 내려놓으세요.");
         }
     }
+
 
     //public void OnItemDeselected(string itemName)
     //{
