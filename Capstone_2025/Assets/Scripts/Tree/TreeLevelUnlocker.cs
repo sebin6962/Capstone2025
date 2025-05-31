@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.IO;
 
 public class TreeLevelUnlocker : MonoBehaviour
 {
@@ -23,11 +24,25 @@ public class TreeLevelUnlocker : MonoBehaviour
     public GameObject notEnoughStarlightPanel; // 별빛 부족 알림 패널
     public CanvasGroup notEnoughStarlightGroup; // 알림 패널의 CanvasGroup
 
+    public TMP_Text currentStateText; // 인스펙터에 현재 상태 텍스트 연결
+
     private Coroutine notEnoughCoroutine = null;
+
+    private TreeUnlockData unlockData;
+    private string savePath;
+
+    void Awake()
+    {
+        savePath = Path.Combine(Application.persistentDataPath, "treeUnlock.json");
+        LoadUnlockData();
+    }
 
     void Start()
     {
         UpdateLevelButtons();
+
+        // (Start에서 currentUnlockedLevel을 unlockData.currentUnlockedLevel로 대입)
+        currentUnlockedLevel = unlockData.currentUnlockedLevel;
 
         // 모든 버튼에 이벤트 리스너 추가
         for (int i = 0; i < levelButtons.Length; i++)
@@ -51,6 +66,14 @@ public class TreeLevelUnlocker : MonoBehaviour
     // 툴팁 표시/숨김 메서드
     public void ShowTooltip(int levelIdx)
     {
+        // 이미 해금된 버튼이면 툴팁 패널을 끈다
+        bool unlocked = levelIdx < currentUnlockedLevel;
+        if (unlocked)
+        {
+            tooltipPanel.SetActive(false);
+            return;
+        }
+
         tooltipPanel.SetActive(true);
         tooltipText.text = $"{starlightNeededForLevel[levelIdx]} 개의 별빛";
 
@@ -66,7 +89,7 @@ public class TreeLevelUnlocker : MonoBehaviour
             null,
             out localPoint
         );
-        tooltipRect.anchoredPosition = localPoint + new Vector2(0, 60f); // 버튼 위로 40 픽셀 이동
+        tooltipRect.anchoredPosition = localPoint + new Vector2(0, 80f); // 버튼 위로 40 픽셀 이동
     }
 
     public void HideTooltip()
@@ -74,14 +97,12 @@ public class TreeLevelUnlocker : MonoBehaviour
         tooltipPanel.SetActive(false);
     }
 
+    // 레벨 해금 시 저장!
     public void TryUnlockLevel(int levelIdx)
     {
-        // 1. 이미 해금됐거나, 선행레벨이 해금 안됐으면 리턴
         if (levelIdx > currentUnlockedLevel) return;
 
         int needStarlight = starlightNeededForLevel[levelIdx];
-
-        // 2. 별빛 충분한지 체크 (DataManager 또는 StarDataManager 사용)
         int currentStarlight = StarDataManager.Instance.playerData.starlight;
 
         if (currentStarlight < needStarlight)
@@ -90,13 +111,35 @@ public class TreeLevelUnlocker : MonoBehaviour
             return;
         }
 
-        // 3. 별빛 차감
+        // 별빛 차감
         StarDataManager.Instance.SpendStarlight(needStarlight);
 
-        // 4. 해금 표시(버튼 색상 변경)
-        currentUnlockedLevel = Mathf.Max(currentUnlockedLevel, levelIdx + 1); // 다음 레벨 해금 가능하게
+        // 해금 현황 갱신
+        currentUnlockedLevel = Mathf.Max(currentUnlockedLevel, levelIdx + 1);
+        unlockData.currentUnlockedLevel = currentUnlockedLevel;
+        SaveUnlockData(); // 해금할 때마다 저장!
 
         UpdateLevelButtons();
+    }
+
+    void SaveUnlockData()
+    {
+        string json = JsonUtility.ToJson(unlockData, true);
+        File.WriteAllText(savePath, json);
+    }
+
+    void LoadUnlockData()
+    {
+        if (File.Exists(savePath))
+        {
+            string json = File.ReadAllText(savePath);
+            unlockData = JsonUtility.FromJson<TreeUnlockData>(json);
+        }
+        else
+        {
+            unlockData = new TreeUnlockData();
+        }
+        currentUnlockedLevel = unlockData.currentUnlockedLevel;
     }
 
     void UpdateLevelButtons()
@@ -114,6 +157,16 @@ public class TreeLevelUnlocker : MonoBehaviour
                 levelDescTexts[i].text = levelDescriptions[i];
             else
                 levelDescTexts[i].text = "???";
+        }
+
+        // 현재 상태 텍스트 표시
+        if (currentUnlockedLevel > 0)
+        {
+            currentStateText.text = $"현재 상태: {levelDescriptions[currentUnlockedLevel - 1]}";
+        }
+        else
+        {
+            currentStateText.text = "현재 상태: 시들어 있는 계수나무";
         }
     }
 
