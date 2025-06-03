@@ -24,6 +24,8 @@ public class TimeManager : MonoBehaviour
 
     private string savePath;
 
+    public bool isTimeFlow = true; // 시간 흐름 제어 변수
+
     void Awake()
     {
         if (Instance == null)
@@ -158,6 +160,12 @@ public class TimeManager : MonoBehaviour
     {
         if (this == Instance)
             SaveDayData();
+    }
+
+    // 외부에서 시간 흐름 On/Off
+    public void SetTimeFlow(bool flow)
+    {
+        isTimeFlow = flow;
     }
 }
 
