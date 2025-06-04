@@ -8,6 +8,8 @@ using System.IO;
 
 public class TreeLevelUnlocker : MonoBehaviour
 {
+    public static int CurrentLevel = 0; // 어디서든 접근 가능하도록 선언
+
     public Button[] levelButtons;                // 0: 첫 레벨
     public TMP_Text[] levelDescTexts;            // 0: 첫 레벨 설명 텍스트
     public int[] starlightNeededForLevel;        // 0: 첫 레벨에 필요한 별빛
@@ -61,6 +63,9 @@ public class TreeLevelUnlocker : MonoBehaviour
             entryExit.callback.AddListener((_) => HideTooltip());
             trigger.triggers.Add(entryExit);
         }
+
+        // 저장된 값을 불러와서 CurrentLevel에도 반영
+        CurrentLevel = currentUnlockedLevel;
     }
 
     // 툴팁 표시/숨김 메서드
@@ -117,7 +122,8 @@ public class TreeLevelUnlocker : MonoBehaviour
         // 해금 현황 갱신
         currentUnlockedLevel = Mathf.Max(currentUnlockedLevel, levelIdx + 1);
         unlockData.currentUnlockedLevel = currentUnlockedLevel;
-        SaveUnlockData(); // 해금할 때마다 저장!
+        CurrentLevel = currentUnlockedLevel;  // static 값도 동기화
+        SaveUnlockData(); // 해금할 때마다 저장
 
         UpdateLevelButtons();
     }

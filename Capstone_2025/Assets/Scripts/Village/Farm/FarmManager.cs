@@ -213,8 +213,12 @@ public class FarmManager : MonoBehaviour
 
         string itemKey = cropData.harvestItemName; // 수확물 이름 사용
         // 창고 인벤토리에 추가
-        StorageInventory.Instance.AddItem(cropData.harvestItemName, 1);
-
+        //StorageInventory.Instance.AddItem(cropData.harvestItemName, 1);
+        Debug.Log("현재 나무 레벨: " + TreeLevelUnlocker.CurrentLevel);
+        int amount = TreeLevelUnlocker.CurrentLevel >= 1 ? 2 : 1;
+        Debug.Log("수확 개수: " + amount);
+        StorageInventory.Instance.AddItem(cropData.harvestItemName, amount);
+        StorageInventory.Instance.SaveStorage(); //  반드시 추가
         // 스프라이트 가져오기
         //Sprite cropSprite = Resources.Load<Sprite>("Sprites" + cropName);
 

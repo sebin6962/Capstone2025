@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class StorageInventoryUIManager : MonoBehaviour
@@ -10,6 +11,11 @@ public class StorageInventoryUIManager : MonoBehaviour
 
     public void ToggleStorageUI()
     {
+        // UI 버튼 외에는 열 수 없게 조건문 추가
+        if (!EventSystem.current.currentSelectedGameObject ||
+            EventSystem.current.currentSelectedGameObject.GetComponent<Button>() == null)
+            return;
+
         if (panel.activeSelf)
         {
             panel.SetActive(false);
