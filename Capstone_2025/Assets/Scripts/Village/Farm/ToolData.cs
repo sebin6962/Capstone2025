@@ -50,4 +50,9 @@ public class ToolData : MonoBehaviour
     {
         return toolList.Find(tool => tool.id == id);
     }
+
+    public bool IsWateringCan(GameObject obj)
+    {
+        return obj.name.Contains("wateringCan") || obj.CompareTag("WateringCan");
+    }
 }

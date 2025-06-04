@@ -52,26 +52,51 @@ public class WateringCanAnchor : MonoBehaviour
 
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
         {
-            // 1. 아무것도 안 들고 있을 때 → 물뿌리개 들기
+            //// 1. 아무것도 안 들고 있을 때 → 물뿌리개 들기
+            //if (!HeldItemManager.Instance.IsHoldingItem())
+            //{
+            //    GameObject canInstance = Instantiate(wateringCanPrefab); // 복제본 생성
+            //    BoxInventoryManager.Instance.HoldItem(canInstance);
+            //    Destroy(placedCan);
+            //    placedCan = null;
+            //    Debug.Log("물뿌리개를 들었습니다.");
+            //}
+            //// 2. 물뿌리개를 들고 있을 때 → 내려놓기
+            //else if (BoxInventoryManager.Instance.IsHoldingWateringCan())
+            //{
+            //    RestoreWateringCan();
+            //    BoxInventoryManager.Instance.RemoveHeldItem();
+            //    Debug.Log("물뿌리개를 다시 놓았습니다.");
+            //}
+            //// 3. 그 외(다른 아이템을 들고 있을 때 등)
+            //else
+            //{
+            //    Debug.Log("물뿌리개 상호작용 불가(다른 아이템을 들고 있음)");
+            //}
+
+            // 1. 아무것도 안 들고 있으면 -> 물뿌리개 들기
             if (!HeldItemManager.Instance.IsHoldingItem())
             {
-                GameObject canInstance = Instantiate(wateringCanPrefab); // 복제본 생성
+                GameObject canInstance = Instantiate(wateringCanPrefab);
                 BoxInventoryManager.Instance.HoldItem(canInstance);
                 Destroy(placedCan);
                 placedCan = null;
                 Debug.Log("물뿌리개를 들었습니다.");
+                return; // << 반드시 return해서 아래 상호작용 중복 방지!
             }
-            // 2. 물뿌리개를 들고 있을 때 → 내려놓기
+            // 2. 물뿌리개를 들고 있으면 -> 내려놓기
             else if (BoxInventoryManager.Instance.IsHoldingWateringCan())
             {
                 RestoreWateringCan();
                 BoxInventoryManager.Instance.RemoveHeldItem();
                 Debug.Log("물뿌리개를 다시 놓았습니다.");
+                return; // << 반드시 return!
             }
-            // 3. 그 외(다른 아이템을 들고 있을 때 등)
+            // 3. 그 외(다른 아이템 들고 있을 때)
             else
             {
-                Debug.Log("물뿌리개 상호작용 불가(다른 아이템을 들고 있음)");
+                Debug.Log("물뿌리개 상호작용 불가(다른 아이템 들고 있음)");
+                return;
             }
         }
     }
