@@ -28,6 +28,12 @@ public class TreeLevelUnlocker : MonoBehaviour
 
     public TMP_Text currentStateText; // 인스펙터에 현재 상태 텍스트 연결
 
+    public GameObject unlockEffectPanel;  // 씬의 패널 오브젝트
+    public TMP_Text levelText;            // 레벨 텍스트
+    public TMP_Text effectText;           // 효과 텍스트
+    public string[] unlockEffectDescriptions;
+
+
     private Coroutine notEnoughCoroutine = null;
 
     private TreeUnlockData unlockData;
@@ -126,6 +132,9 @@ public class TreeLevelUnlocker : MonoBehaviour
         SaveUnlockData(); // 해금할 때마다 저장
 
         UpdateLevelButtons();
+
+        // 해금 현황 갱신 이후에 효과 패널만 활성화 & 텍스트 교체
+        ShowUnlockEffectPanel(currentUnlockedLevel);
     }
 
     void SaveUnlockData()
@@ -214,5 +223,21 @@ public class TreeLevelUnlocker : MonoBehaviour
 
         notEnoughStarlightPanel.SetActive(false);
         notEnoughCoroutine = null;
+    }
+
+    void ShowUnlockEffectPanel(int level)
+    {
+        int idx = level - 1;
+        if (idx < 0 || idx >= unlockEffectDescriptions.Length) return;
+
+        unlockEffectPanel.SetActive(true); // 패널만 켜고
+        levelText.text = $"{level}단계 해금";
+        effectText.text = unlockEffectDescriptions[idx];
+        // 이후 원하는 연출(애니메이션 등) 추가
+    }
+    // 이 메서드를 OnClick에 연결하세요!
+    public void ClosePanel()
+    {
+        unlockEffectPanel.SetActive(false); // 패널만 숨김
     }
 }
