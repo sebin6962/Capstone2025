@@ -4158,6 +4158,7 @@ GameObject:
   - component: {fileID: 1344907540}
   - component: {fileID: 1344907539}
   - component: {fileID: 1344907541}
+  - component: {fileID: 1344907542}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4173,12 +4174,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344907537}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -14.58708, y: -5.934287, z: 1719.2692}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1915602201}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1344907539
 MonoBehaviour:
@@ -4218,6 +4219,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeManagerPrefab: {fileID: 8790467096245627813, guid: 9d341648d67654d4e9a597e190d81964, type: 3}
+--- !u!114 &1344907542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344907537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cbbe1b28353ad4419f22a32695045de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fromScene: 
+  toScene: 
+  entranceID: 
 --- !u!1 &1347025249
 GameObject:
   m_ObjectHideFlags: 0
@@ -6699,7 +6715,6 @@ Transform:
   - {fileID: 445508899}
   - {fileID: 1036533291}
   - {fileID: 1278259978}
-  - {fileID: 1344907538}
   - {fileID: 320249496}
   - {fileID: 757592432}
   m_Father: {fileID: 0}
@@ -7191,6 +7206,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 913648123}
   - {fileID: 1347025252}
+  - {fileID: 1344907538}
   - {fileID: 1915602201}
   - {fileID: 463795284}
   - {fileID: 2112716719}

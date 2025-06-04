@@ -23,8 +23,36 @@ public class WateringCanAnchor : MonoBehaviour
 
     void Update()
     {
+        //if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
+        //{
+        //    if (!HeldItemManager.Instance.IsHoldingItem())
+        //    {
+        //        GameObject canInstance = Instantiate(wateringCanPrefab); // 복제본 생성
+        //        BoxInventoryManager.Instance.HoldItem(canInstance);
+        //        Destroy(placedCan);
+        //        placedCan = null;
+        //        Debug.Log("물뿌리개를 들었습니다.");
+        //    }
+        //}
+
+        //if (isPlayerNearby && Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    if (HeldItemManager.Instance.IsHoldingItem() &&
+        //BoxInventoryManager.Instance.IsHoldingWateringCan())
+        //    {
+        //        RestoreWateringCan();
+        //        BoxInventoryManager.Instance.RemoveHeldItem();
+        //        Debug.Log("물뿌리개를 다시 놓았습니다.");
+        //    }
+        //    else
+        //    {
+        //        Debug.Log("물뿌리개를 들고 있지 않음");
+        //    }
+        //}
+
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
         {
+            // 1. 아무것도 안 들고 있을 때 → 물뿌리개 들기
             if (!HeldItemManager.Instance.IsHoldingItem())
             {
                 GameObject canInstance = Instantiate(wateringCanPrefab); // 복제본 생성
@@ -33,29 +61,18 @@ public class WateringCanAnchor : MonoBehaviour
                 placedCan = null;
                 Debug.Log("물뿌리개를 들었습니다.");
             }
-        }
-
-        if (isPlayerNearby && Input.GetKeyDown(KeyCode.Space))
-        {
-            if (HeldItemManager.Instance.IsHoldingItem() &&
-        BoxInventoryManager.Instance.IsHoldingWateringCan())
+            // 2. 물뿌리개를 들고 있을 때 → 내려놓기
+            else if (BoxInventoryManager.Instance.IsHoldingWateringCan())
             {
                 RestoreWateringCan();
                 BoxInventoryManager.Instance.RemoveHeldItem();
                 Debug.Log("물뿌리개를 다시 놓았습니다.");
             }
+            // 3. 그 외(다른 아이템을 들고 있을 때 등)
             else
             {
-                Debug.Log("물뿌리개를 들고 있지 않음");
+                Debug.Log("물뿌리개 상호작용 불가(다른 아이템을 들고 있음)");
             }
-
-            //수정 필요
-            //if (BoxInventoryManager.Instance.IsHoldingWateringCan())
-            //{
-            //    RestoreWateringCan();
-            //    BoxInventoryManager.Instance.RemoveHeldItem();
-            //    Debug.Log("물뿌리개를 다시 놓았습니다.");
-            //}
         }
     }
 
