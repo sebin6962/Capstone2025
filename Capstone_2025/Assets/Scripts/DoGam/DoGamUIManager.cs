@@ -104,6 +104,10 @@ public class DoGamUIManager : MonoBehaviour
 
     public void OpenDoGam(string itemName)
     {
+        // 박스 인벤토리 열려 있으면 도감 오픈 막기
+        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
+            return;
+
         if (!doGamDict.ContainsKey(itemName))
         {
             Debug.LogWarning($"도감 항목 '{itemName}'을 찾을 수 없습니다.");
@@ -126,6 +130,11 @@ public class DoGamUIManager : MonoBehaviour
         recipeText.text = string.Join("\n", entry.recipe);
 
         itemImage.sprite = Resources.Load<Sprite>("Sprites/Dagwa/" + entry.image);
+    }
+
+    public bool IsOpen()
+    {
+        return panel != null && panel.activeSelf;
     }
 
     public void ShowEntry(int index)

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TreeInteract : MonoBehaviour
 {
+    public static TreeInteract Instance;
+
     private bool isPlayerNear = false;
     public GameObject popupUI; // 팝업창 오브젝트
     //private PlayerManager playerManager; // 이동 관리 스크립트 참조

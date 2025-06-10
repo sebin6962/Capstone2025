@@ -6,11 +6,20 @@ using UnityEngine.UI;
 
 public class StorageInventoryUIManager : MonoBehaviour
 {
+    public static StorageInventoryUIManager Instance;
     public GameObject panel;                     // 창고 패널
     public List<StorageInventorySlot> slots;     // 미리 배치된 슬롯들
 
     public void ToggleStorageUI()
     {
+        // 박스 인벤토리 열려 있으면 창고 열기/닫기 막기
+        if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
+            return;
+
+        // 도감 패널이 열려 있으면 창고 열기/닫기 막기
+        if (DoGamUIManager.Instance != null && DoGamUIManager.Instance.IsOpen())
+            return;
+
         // UI 버튼 외에는 열 수 없게 조건문 추가
         if (!EventSystem.current.currentSelectedGameObject ||
             EventSystem.current.currentSelectedGameObject.GetComponent<Button>() == null)
@@ -52,5 +61,10 @@ public class StorageInventoryUIManager : MonoBehaviour
             slots[i].SetItem(pair.Key, sprite, pair.Value);
             i++;
         }
+    }
+
+    public bool IsOpen()
+    {
+        return panel != null && panel.activeSelf;
     }
 }

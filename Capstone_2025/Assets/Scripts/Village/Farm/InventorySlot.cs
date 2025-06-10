@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
-public class InventorySlot : MonoBehaviour
+public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Image itemImage;
     public TextMeshProUGUI countText;
 
     private string itemName;
     private int count;
+
+    public string tooltipText;
 
     public void OnClick()
     {
@@ -87,6 +90,10 @@ public class InventorySlot : MonoBehaviour
         itemName = string.IsNullOrEmpty(name) ? sprite.name.Replace("(Clone)", "").Trim() : name.Replace("(Clone)", "").Trim();
         this.count = count;
 
+        // 한글 툴팁 텍스트 매핑
+        if (!ItemTooltipDB.TooltipTexts.TryGetValue(name, out tooltipText))
+            tooltipText = name; // 혹시 없을 때 대비 예외 처리
+
         if (count <= 0)
         {
             ClearSlot(); // 완전 제거
@@ -128,6 +135,21 @@ public class InventorySlot : MonoBehaviour
         //}
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!string.IsNullOrEmpty(itemName))
+        {
+            InventoryTooltipManager.Instance.Show(
+                tooltipText, // 툴팁에 쓸 텍스트
+                GetComponent<RectTransform>() // 슬롯 RectTransform
+            );
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        InventoryTooltipManager.Instance.Hide();
+    }
     public bool HasItem()
     {
         return itemImage != null && itemImage.sprite != null;

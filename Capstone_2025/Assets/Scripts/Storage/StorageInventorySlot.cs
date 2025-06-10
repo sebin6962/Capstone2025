@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
-public class StorageInventorySlot : MonoBehaviour
+public class StorageInventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Image itemImage;
     public TextMeshProUGUI countText;
@@ -12,6 +13,7 @@ public class StorageInventorySlot : MonoBehaviour
     //Ãß°¡: ¾ÆÀÌÅÛ Á¤º¸ ÀúÀå¿ë
     public string itemName;
     public Sprite itemSprite;
+    public string tooltipText;
 
     public void SetItem(string itemKey, Sprite sprite, int count)
     {
@@ -26,6 +28,10 @@ public class StorageInventorySlot : MonoBehaviour
         itemName = itemKey;
         itemImage.sprite = sprite;
         itemImage.enabled = true;
+
+        // ÇÑ±Û ÅøÆÁ ÅØ½ºÆ® ¸ÅÇÎ
+        if (!ItemTooltipDB.TooltipTexts.TryGetValue(itemKey, out tooltipText))
+            tooltipText = itemKey; // È¤½Ã ¾øÀ» ¶§ ´ëºñ ¿¹¿Ü Ã³¸®
 
         countText.text = (count > 1) ? count.ToString() : "";
         countText.enabled = true;
@@ -48,4 +54,41 @@ public class StorageInventorySlot : MonoBehaviour
         if (itemSprite == null || string.IsNullOrEmpty(itemName)) return;
         PlayerStoreBoxInventoryUIManager.Instance.OnItemSelected(itemName, itemSprite);
     }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!string.IsNullOrEmpty(itemName))
+        {
+            InventoryTooltipManager.Instance.Show(
+                tooltipText, // ÅøÆÁ¿¡ ¾µ ÅØ½ºÆ®
+                GetComponent<RectTransform>() // ½½·Ô RectTransform
+            );
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        InventoryTooltipManager.Instance.Hide();
+    }
+}
+
+public static class ItemTooltipDB
+{
+    public static Dictionary<string, string> TooltipTexts = new Dictionary<string, string>
+    {
+        { "Grind_Redbean", "°ö°Ô °£ ÆÏ" },
+        { "Chapssalgaru", "Âý½Ò°¡·ç" },
+        { "Mugwortgaru", "¾¦ °¡·ç" },
+        { "Water", "¹°" },
+        { "Danhobakgaru", "´ÜÈ£¹Ú°¡·ç" },
+        { "Konggaru", "Äá°¡·ç" },
+        { "Baeknyeonchogaru", "¹é³âÃÊ°¡·ç" },
+        { "Redbean", "ÆÏ" },
+        { "Mepssalgaru", "¸ã½Ò°¡·ç" },
+        { "Mugwort", "¾¦" },
+        { "Rice", "½Ò" },
+        { "Mugwort_seedBag", "¾¦ ¾¾¾Ñ" },
+        { "Rice_seedBag", "½Ò ¸ðÁ¾" }
+        // ÇÊ¿äÇÑ ¸¸Å­ Ãß°¡
+    };
 }

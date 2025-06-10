@@ -34,6 +34,14 @@ public class BoxInventoryManager : MonoBehaviour
 
     private void ToggleInventory()
     {
+        // 도감 패널 또는 창고 패널이 열려 있으면 박스 인벤토리 열기 금지!
+        if ((DoGamUIManager.Instance != null && DoGamUIManager.Instance.panel.activeSelf))
+            return;
+
+        // 재고 패널이 열려 있으면 창고 열기/닫기 막기
+        if (StorageInventoryUIManager.Instance != null && StorageInventoryUIManager.Instance.IsOpen())
+            return;
+
         bool isActive = inventoryPanel.activeSelf;
         inventoryPanel.SetActive(!isActive);
     }
