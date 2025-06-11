@@ -22,6 +22,9 @@ TagManager:
   - Basket
   - BasketSpot
   - StorageBox
+  - Plate
+  - HeldDagwa
+  - Dagwa
   layers:
   - Default
   - TransparentFX

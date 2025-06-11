@@ -146,3 +146,4 @@ MonoBehaviour:
   capacity: 2
   itemNames: []
   itemSprites: []
+  originalPosition: {x: 0, y: 0, z: 0}
