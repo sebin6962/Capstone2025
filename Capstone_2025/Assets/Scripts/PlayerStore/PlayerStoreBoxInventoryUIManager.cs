@@ -27,6 +27,14 @@ public class PlayerStoreBoxInventoryUIManager : MonoBehaviour
 
     public void OpenUI(StorageInventory storage)
     {
+        // 도감 패널이 열려 있으면 박스 열기/닫기 막기
+        if (DoGamUIManager.Instance != null && DoGamUIManager.Instance.IsOpen())
+            return;
+
+        // 재료 재고 패널이 열려 있으면 박스 열기/닫기 막기
+        if (StorageInventoryUIManager.Instance != null && StorageInventoryUIManager.Instance.IsOpen())
+            return;
+
         currentInventory = storage;
         panel.SetActive(true);
         //selectedItemName = null;

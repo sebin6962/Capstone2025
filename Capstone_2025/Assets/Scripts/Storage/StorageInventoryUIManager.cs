@@ -12,6 +12,10 @@ public class StorageInventoryUIManager : MonoBehaviour
 
     public void ToggleStorageUI()
     {
+        // 가게 박스 인벤토리 열려 있으면 창고 열기/닫기 막기
+        if (PlayerStoreBoxInventoryUIManager.Instance != null && PlayerStoreBoxInventoryUIManager.Instance.IsOpen())
+            return;
+
         // 박스 인벤토리 열려 있으면 창고 열기/닫기 막기
         if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
             return;

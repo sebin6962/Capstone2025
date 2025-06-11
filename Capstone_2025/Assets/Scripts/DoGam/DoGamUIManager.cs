@@ -108,6 +108,10 @@ public class DoGamUIManager : MonoBehaviour
         if (BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen())
             return;
 
+        // 가게 박스 인벤토리 열려 있으면 도감 오픈 막기
+        if (PlayerStoreBoxInventoryUIManager.Instance != null && PlayerStoreBoxInventoryUIManager.Instance.IsOpen())
+            return;
+
         if (!doGamDict.ContainsKey(itemName))
         {
             Debug.LogWarning($"도감 항목 '{itemName}'을 찾을 수 없습니다.");

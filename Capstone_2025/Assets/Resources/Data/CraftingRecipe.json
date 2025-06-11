@@ -112,12 +112,12 @@
     },
     {
       "makerId": "Mixing02",
-      "ingredients": [ "Sieve_Mepssalgaru", "Water", "Sieve_Mugwortgaru" ],
+      "ingredients": [ "Water", "Sieve_Mugwortgaru" ],
       "resultSprite": "Mixing_Mugwort"
     },
     {
       "makerId": "Mixing02",
-      "ingredients": [ "Sieve_Mepssalgaru", "Water", "Sieve_Danhobakgaru" ],
+      "ingredients": [ "Water", "Sieve_Danhobakgaru" ],
       "resultSprite": "Mixing_Danhobak"
     },
     {
