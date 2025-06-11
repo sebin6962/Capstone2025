@@ -19,7 +19,9 @@ public class PlayerManager : MonoBehaviour
     {
         if ((BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen()) ||
     (PopupInventoryUIManager.Instance != null && PopupInventoryUIManager.Instance.IsPopupOpen()) ||
-    (BasketInventoryUIManager.Instance != null && BasketInventoryUIManager.Instance.IsOpen)) // ← 추가
+    (PlayerStoreBoxInventoryUIManager.Instance != null && PlayerStoreBoxInventoryUIManager.Instance.IsOpen()) ||
+    (DoGamUIManager.Instance != null && DoGamUIManager.Instance.IsOpen()) ||
+    (StorageInventoryUIManager.Instance != null && StorageInventoryUIManager.Instance.IsOpen())) // ← 추가
         {
             movement = Vector2.zero;
             return;
@@ -32,8 +34,10 @@ public class PlayerManager : MonoBehaviour
     void FixedUpdate()
     {
         if ((BoxInventoryManager.Instance != null && BoxInventoryManager.Instance.IsInventoryOpen()) ||
-    (PopupInventoryUIManager.Instance != null && PopupInventoryUIManager.Instance.IsPopupOpen()) ||
-    (BasketInventoryUIManager.Instance != null && BasketInventoryUIManager.Instance.IsOpen)) // ← 추가
+    (PopupInventoryUIManager.Instance != null && PopupInventoryUIManager.Instance.IsPopupOpen())||
+    (PlayerStoreBoxInventoryUIManager.Instance != null && PlayerStoreBoxInventoryUIManager.Instance.IsOpen()) ||
+    (DoGamUIManager.Instance != null && DoGamUIManager.Instance.IsOpen()) ||
+    (StorageInventoryUIManager.Instance != null && StorageInventoryUIManager.Instance.IsOpen()))
         {
             return;
         }

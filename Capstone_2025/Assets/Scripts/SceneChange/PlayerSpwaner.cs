@@ -11,7 +11,13 @@ public class PlayerSpwaner : MonoBehaviour
 
         if (spawnPoint != null)
         {
-            transform.position = spawnPoint.transform.position;
+            //transform.position = spawnPoint.transform.position;
+            // 기존 위치에서 z값만 0으로
+            Vector3 spawnPos = spawnPoint.transform.position;
+            spawnPos.z = 0f; // z값을 0으로 고정
+            transform.position = spawnPos;
+
+            Debug.Log($"[Spawner] entranceID: {entrance}");
 
             // 방향 예시 (선택적)
             //var animator = GetComponent<PlayerAnimator>();

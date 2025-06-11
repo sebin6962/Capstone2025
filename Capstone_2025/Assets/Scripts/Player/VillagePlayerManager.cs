@@ -19,9 +19,12 @@ public class VillagePlayerManager : MonoBehaviour
             }
         }
 
-        if (currentItem != null && Input.GetKeyDown(KeyCode.Space))
+        if (currentItem != null && Input.GetKeyDown(KeyCode.E))
         {
-            if (currentItem.name == "wateringCan")
+            //if (currentItem.name == "wateringCan")
+            //    return;
+
+            if (currentItem.name.Contains("wateringCan") || ToolData.Instance.IsWateringCan(currentItem))
                 return;
 
             if (HeldItemManager.Instance.IsHoldingItem())

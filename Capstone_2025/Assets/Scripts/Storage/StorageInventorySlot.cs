@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
-public class StorageInventorySlot : MonoBehaviour
+public class StorageInventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Image itemImage;
     public TextMeshProUGUI countText;
@@ -12,6 +13,7 @@ public class StorageInventorySlot : MonoBehaviour
     //추가: 아이템 정보 저장용
     public string itemName;
     public Sprite itemSprite;
+    public string tooltipText;
 
     public void SetItem(string itemKey, Sprite sprite, int count)
     {
@@ -26,6 +28,10 @@ public class StorageInventorySlot : MonoBehaviour
         itemName = itemKey;
         itemImage.sprite = sprite;
         itemImage.enabled = true;
+
+        // 한글 툴팁 텍스트 매핑
+        if (!ItemTooltipDB.TooltipTexts.TryGetValue(itemKey, out tooltipText))
+            tooltipText = itemKey; // 혹시 없을 때 대비 예외 처리
 
         countText.text = (count > 1) ? count.ToString() : "";
         countText.enabled = true;
@@ -46,23 +52,43 @@ public class StorageInventorySlot : MonoBehaviour
     public void OnClick()
     {
         if (itemSprite == null || string.IsNullOrEmpty(itemName)) return;
+        PlayerStoreBoxInventoryUIManager.Instance.OnItemSelected(itemName, itemSprite);
+    }
 
-        // 바구니에 아이템 추가 시도
-        if (HeldItemManager.Instance.GetHeldItemName() == "basket" &&
-            BasketInventoryUIManager.Instance.IsOpen &&
-            BasketInventoryUIManager.Instance.TryAddItemToBasket(itemName, itemSprite))
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!string.IsNullOrEmpty(itemName))
         {
-            StorageInventory.Instance.AddItem(itemName, -1); // 상자에서 제거
-
-            // 수량이 0이 되었는지 다시 검사
-            if (!StorageInventory.Instance.HasItem(itemName))
-            {
-                ClearSlot(); // 슬롯도 비움
-            }
-
-            Debug.Log($"[이동] {itemName} 1개 → 바구니로 이동");
-
-            PlayerStoreBoxInventoryUIManager.Instance.UpdateSlots(); // UI 갱신
+            InventoryTooltipManager.Instance.Show(
+                tooltipText, // 툴팁에 쓸 텍스트
+                GetComponent<RectTransform>() // 슬롯 RectTransform
+            );
         }
     }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        InventoryTooltipManager.Instance.Hide();
+    }
+}
+
+public static class ItemTooltipDB
+{
+    public static Dictionary<string, string> TooltipTexts = new Dictionary<string, string>
+    {
+        { "Grind_Redbean", "곱게 간 팥" },
+        { "Chapssalgaru", "찹쌀가루" },
+        { "Mugwortgaru", "쑥 가루" },
+        { "Water", "물" },
+        { "Danhobakgaru", "단호박가루" },
+        { "Konggaru", "콩가루" },
+        { "Baeknyeonchogaru", "백년초가루" },
+        { "Redbean", "팥" },
+        { "Mepssalgaru", "멥쌀가루" },
+        { "Mugwort", "쑥" },
+        { "Rice", "쌀" },
+        { "Mugwort_seedBag", "쑥 씨앗" },
+        { "Rice_seedBag", "쌀 모종" }
+        // 필요한 만큼 추가
+    };
 }

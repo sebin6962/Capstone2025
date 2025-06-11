@@ -10,13 +10,9 @@ public class PlayerInteract : MonoBehaviour
     private bool isNearMaker = false;
     public MakerInfo currentMaker;
 
-    private BasketInventory nearbyBasket;
-
-    private BasketInventory carriedBasket; // 현재 들고 있는 바구니의 실제 컴포넌트
-    private GameObject currentBasketSpot;
-    public GameObject basketPrefab;        // 바구니 프리팹 (Inspector에서 연결)
-
     private StorageInventory nearbyStorage;
+
+    private TableInfo nearbyTable;   // 탁자 감지용(Trigger/Collision에서 할당)
     //private bool requestCrafting = false;
     private void Awake()
     {
@@ -25,161 +21,226 @@ public class PlayerInteract : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(interactKey))
+        // E키
+    if (Input.GetKeyDown(interactKey))
+    {
+        // 1. 상자(창고) 인벤토리가 열려 있고, 플레이어가 상자와 닿아있을 때 E키 → UI 닫기
+        if (nearbyStorage != null && PlayerStoreBoxInventoryUIManager.Instance.IsOpen())
         {
-            // 0. 바구니 인벤토리 열려 있으면 → 닫기
-            if (BasketInventoryUIManager.Instance.IsOpen)
+            PlayerStoreBoxInventoryUIManager.Instance.CloseUI();
+            Debug.Log("[E] 상자 인벤토리 닫힘");
+            return;
+        }
+
+        // 2. 상자(창고)에 닿아 있고, UI가 닫혀 있을 때 → E키로 열기
+        if (nearbyStorage != null)
+        {
+            PlayerStoreBoxInventoryUIManager.Instance.OpenUI(nearbyStorage);
+            Debug.Log("[E] 상자 인벤토리 열기");
+            return;
+        }
+
+        // 3. 제작기 근처에 있을 때
+        if (isNearMaker && currentMaker != null)
+        {
+            // (1) 제작기에 완성된 결과물이 있는 경우
+            if (currentMaker.currentResultObject != null)
             {
-                BasketInventoryUIManager.Instance.CloseBasketUI();
-
-                Debug.Log("[E] 바구니 인벤토리 닫힘");
-                return;
-            }
-
-            // *상자와 바구니가 동시에 열려 있을 때 → 모두 닫기
-            if (PlayerStoreBoxInventoryUIManager.Instance.IsOpen() &&
-                BasketInventoryUIManager.Instance.IsOpen)
-            {
-                PlayerStoreBoxInventoryUIManager.Instance.CloseUI();
-                BasketInventoryUIManager.Instance.CloseBasketUI();
-                Debug.Log("[E] 상자 + 바구니 UI 닫기");
-                return;
-            }
-
-            //1.바구니 들기
-            if (nearbyBasket != null && !HeldItemManager.Instance.IsHoldingItem())
-            {
-                Sprite sprite = nearbyBasket.GetComponent<SpriteRenderer>().sprite;
-                HeldItemManager.Instance.ShowHeldItem(sprite, "basket");
-
-                // 저장
-                carriedBasket = nearbyBasket;
-                carriedBasket.originalPosition = carriedBasket.transform.position;
-
-                // 바구니 오브젝트 비활성화 (파괴 X)
-                carriedBasket.gameObject.SetActive(false);
-                nearbyBasket = null;
-
-                Debug.Log("[E] 바구니 들기 (비활성화)");
-                return;
-            }
-
-            // 2. 바구니 내려놓기 (Spot에 닿아있을 때)
-            if (HeldItemManager.Instance.GetHeldItemName() == "basket" && carriedBasket != null && currentBasketSpot != null)
-            {
-                // 원래 바구니 오브젝트 다시 활성화
-                carriedBasket.transform.position = currentBasketSpot.transform.position;
-                carriedBasket.gameObject.SetActive(true);
-
-                // 들고 있는 상태 해제
-                HeldItemManager.Instance.HideHeldItem();
-                carriedBasket = null;
-
-                Debug.Log("[E] 바구니 내려놓기 (기존 오브젝트 복귀)");
-                return;
-            }
-
-            // 2. 바구니 들고 제작기 근처에 있을 때
-            if (HeldItemManager.Instance.GetHeldItemName() == "basket" && isNearMaker && currentMaker != null)
+                if (!HeldItemManager.Instance.IsHoldingItem())
                 {
-                BasketInventory basket = carriedBasket;
-                if (basket == null)
-                {
-                    Debug.LogWarning("carriedBasket이 null입니다.");
-                    return;
-                }
-
-                    // 2-1. 결과물 있으면 수거
-                    if (currentMaker.currentResultObject != null)
+                    var sr = currentMaker.currentResultObject.GetComponent<SpriteRenderer>();
+                    if (sr != null)
                     {
-                        var resultSpriteRenderer = currentMaker.currentResultObject.GetComponent<SpriteRenderer>();
-                        if (resultSpriteRenderer != null)
-                        {
-                            Sprite resultSprite = resultSpriteRenderer.sprite;
-                            string resultName = resultSprite.name;
-
-                            bool added = basket.AddItem(resultName, resultSprite);
-                            if (added)
-                            {
-                                Destroy(currentMaker.currentResultObject);
-                                currentMaker.currentResultObject = null;
-                                Debug.Log($"[E] 제작기에서 결과물 {resultName} 수거 → 바구니에 저장됨");
-
-                                // UI 업데이트 (이미 열려 있으면 반영됨)
-                                BasketInventoryUIManager.Instance.UpdateUI();
-                            }
-                            else
-                            {
-                                Debug.Log("[E] 바구니가 가득 차서 결과물을 저장할 수 없습니다.");
-                            }
-                            return;
-                        }
+                        Sprite resultSprite = sr.sprite;
+                        string resultName = resultSprite.name;
+                        HeldItemManager.Instance.ShowHeldItem(resultSprite, resultName);
+                        Destroy(currentMaker.currentResultObject);
+                        currentMaker.currentResultObject = null;
+                        Debug.Log($"[E] 결과물 {resultName} 소지 시작");
                     }
+                }
+                else
+                {
+                    Debug.Log("이미 들고 있는 아이템이 있습니다! 결과물 소지 불가.");
+                }
+                return;
+            }
 
-                    // 2-2. 결과물 없으면 인벤토리만 열기
-                    BasketInventoryUIManager.Instance.OpenBasketUI(basket, HeldItemManager.Instance.player);
-                    Debug.Log("[E] 바구니 인벤토리 열기");
+                // (2) 제작기에 결과물이 없고, 플레이어가 아이템을 들고 있다면 → 재료 투입(최대 4개)
+                if (HeldItemManager.Instance.IsHoldingItem())
+                {
+                    if (currentMaker.inputItemNames.Count >= 4)
+                    {
+                        Debug.Log("제작기 재료 슬롯이 가득 찼습니다! (최대 4개)");
+                        return;
+                    }
+                    string heldItemName = HeldItemManager.Instance.GetHeldItemName();
+                    Sprite heldItemSprite = HeldItemManager.Instance.GetHeldItemSprite();
+
+                    currentMaker.inputItemNames.Add(heldItemName);
+                    currentMaker.inputItemSprites.Add(heldItemSprite);
+
+                    // 재료 넣을 때 슬롯UI가 없으면 자동 생성(클론) & 위치 지정 & 활성화
+                    currentMaker.ActivateSlotUI();
+                    if (currentMaker.slotUIManager != null)
+                        currentMaker.slotUIManager.UpdateSlots(currentMaker.inputItemSprites);
+
+                    HeldItemManager.Instance.HideHeldItem();
+                    Debug.Log($"[E] {heldItemName} 제작기에 투입, 총 {currentMaker.inputItemNames.Count}/4");
                     return;
+                }
+        }
 
+            // 4. 탁자에 아이템 놓기
+            if (nearbyTable != null && HeldItemManager.Instance.IsHoldingItem())
+            {
+                if (nearbyTable.currentPlacedObject != null)
+                {
+                    Debug.Log("탁자 위에 이미 아이템이 있습니다!");
+                    return;
                 }
 
-            // 상자 UI 열려 있을 경우 → 닫기
-            if (PlayerStoreBoxInventoryUIManager.Instance.IsOpen())
-            {
-                PlayerStoreBoxInventoryUIManager.Instance.CloseUI();
+                Sprite heldSprite = HeldItemManager.Instance.GetHeldItemSprite();
+                string heldName = HeldItemManager.Instance.GetHeldItemName();
+
+                // Spot 위치에 아이템 오브젝트 생성
+                GameObject tableItemObj = new GameObject("TableItem");
+                SpriteRenderer sr = tableItemObj.AddComponent<SpriteRenderer>();
+                sr.sprite = heldSprite;
+
+                // Sorting Layer/Order를 탁자보다 높게 설정
+                sr.sortingLayerName = "Obj";   // 원하는 Sorting Layer 이름
+                sr.sortingOrder = 100;              // 탁자 SpriteRenderer보다 더 큰 값
+
+                // 아이템 크기 조정 (예: 0.6배로 줄이기)
+                tableItemObj.transform.localScale = new Vector3(0.6f, 0.6f, 1f);
+
+                // Spot 위치에 배치
+                tableItemObj.transform.position = nearbyTable.itemSpot.position;
+
+                nearbyTable.currentPlacedObject = tableItemObj;
+
+                HeldItemManager.Instance.HideHeldItem();
+
+                Debug.Log($"[E] {heldName}을(를) 탁자 위에 놓음");
                 return;
             }
 
-            // 바구니 + 상자 동시에 열기
-            if (HeldItemManager.Instance.GetHeldItemName() == "basket" && carriedBasket != null && nearbyStorage != null)
+            // 4-1.탁자에서 아이템 회수(들고 있지 않은 상태에서 E키)
+            if (nearbyTable != null && !HeldItemManager.Instance.IsHoldingItem())
             {
-                BasketInventoryUIManager.Instance.OpenBasketUI(carriedBasket, HeldItemManager.Instance.player);
-                PlayerStoreBoxInventoryUIManager.Instance.OpenUI(nearbyStorage);
-                Debug.Log("[E] 바구니+상자 UI 동시 열기");
-                return;
-            }
+                if (nearbyTable.currentPlacedObject != null)
+                {
+                    SpriteRenderer sr = nearbyTable.currentPlacedObject.GetComponent<SpriteRenderer>();
+                    if (sr != null)
+                    {
+                        Sprite tableSprite = sr.sprite;
+                        string tableName = tableSprite.name;
 
-            // 상자 열기
-            if (nearbyStorage != null)
-            {
-                PlayerStoreBoxInventoryUIManager.Instance.OpenUI(nearbyStorage);
-                Debug.Log("[E] 상자 인벤토리 열기");
-                return;
+                        HeldItemManager.Instance.ShowHeldItem(tableSprite, tableName);
+
+                        Destroy(nearbyTable.currentPlacedObject);
+                        nearbyTable.currentPlacedObject = null;
+
+                        Debug.Log($"[E] 탁자에서 {tableName}을(를) 집음");
+                    }
+                    return;
+                }
             }
         }
 
+        // Space키: 제작 시도 (제작기 근처에서만)
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (isNearMaker && BasketInventoryUIManager.Instance.IsOpen)
+            // 1. 상자(창고) 인벤토리가 열려 있고, 플레이어가 아이템을 들고 있다면
+            if (PlayerStoreBoxInventoryUIManager.Instance.IsOpen() &&
+                HeldItemManager.Instance.IsHoldingItem())
             {
-                //if (currentMaker == null)
-                //{
-                //    Debug.LogWarning("[제작 실패] currentMaker가 null입니다!");
-                //    return;
-                //}
+                string heldItemName = HeldItemManager.Instance.GetHeldItemName();
 
-                Debug.Log($"[Space] 제작 시도 - makerId: {currentMaker.makerId}");
-                StartCoroutine(DelayedCraftingRoutine());
+                StorageInventory.Instance.AddItem(heldItemName, 1);
+                StorageInventory.Instance.SaveStorage();
+
+                HeldItemManager.Instance.HideHeldItem();
+
+                PlayerStoreBoxInventoryUIManager.Instance.UpdateSlots();
+
+                Debug.Log($"[Space] {heldItemName} 1개를 상자에 보관함");
+                return;
+            }
+
+            // 2. 제작기 근처에서 재료가 1개 이상 쌓인 경우에만 제작 시도
+            if (isNearMaker && currentMaker != null && currentMaker.inputItemNames.Count > 0)
+            {
+                var recipeSet = new HashSet<string>(currentMaker.inputItemNames);
+                Sprite resultSprite = CraftingRecipeManager.Instance.GetResultSprite(currentMaker.makerId, recipeSet);
+
+                if (resultSprite != null)
+                {
+                    // 제작 시작 시 슬롯 UI 비활성화 (여러 제작기 독립)
+                    currentMaker.DeactivateSlotUI();
+
+                    Debug.Log("[Space] 제작 성공, 결과: " + resultSprite.name);
+
+                    // 진행바 + 결과 생성
+                    StartCoroutine(currentMaker.ShowProgressAndSpawnItem(resultSprite));
+
+                    // 인풋 인벤토리, 슬롯 UI 초기화
+                    currentMaker.inputItemNames.Clear();
+                    currentMaker.inputItemSprites.Clear();
+                    if (currentMaker.slotUIManager != null)
+                        currentMaker.slotUIManager.ClearSlots();
+                }
+                else
+                {
+                    Debug.LogWarning("[Space] 제작 실패: 레시피 매칭 실패");
+                }
                 return;
             }
         }
     }
 
-    private IEnumerator DelayedCraftingRoutine()
-    {
-        yield return null; // 1프레임 대기
+    //private IEnumerator DelayedCraftingRoutine()
+    //{
+    //    yield return null; // 1프레임 대기
 
-        if (currentMaker != null)
-        {
-            Debug.Log($"[지연된 제작 시도] makerId: {currentMaker.makerId}");
-            //BasketInventoryUIManager.Instance.ForceUpdateWaterState();
-            BasketInventoryUIManager.Instance.StartCrafting(currentMaker);
-        }
-        else
-        {
-            Debug.LogWarning("[지연된 제작 실패] currentMaker가 null입니다");
-        }
-    }
+    //    if (currentMaker != null)
+    //    {
+    //        Debug.Log($"[지연된 제작 시도] makerId: {currentMaker.makerId}");
+
+    //        // 1. 플레이어가 들고 있는 아이템 이름만 가져옴
+    //        string heldItemName = HeldItemManager.Instance.GetHeldItemName();
+
+    //        // 2. 레시피 인자 준비 (항상 한 가지 아이템만)
+    //        var recipeSet = new HashSet<string>();
+    //        if (!string.IsNullOrEmpty(heldItemName))
+    //            recipeSet.Add(heldItemName);
+
+    //        // 3. 실제 제작 실행
+    //        Sprite resultSprite = CraftingRecipeManager.Instance.GetResultSprite(currentMaker.makerId, recipeSet);
+
+    //        if (resultSprite != null)
+    //        {
+    //            // 제작 성공!
+    //            Debug.Log("[제작 성공] 결과: " + resultSprite.name);
+
+    //            // 소지 아이템 소모
+    //            HeldItemManager.Instance.HideHeldItem();
+
+    //            // 결과 오브젝트 스폰 
+    //            StartCoroutine(currentMaker.ShowProgressAndSpawnItem(resultSprite));
+    //        }
+    //        else
+    //        {
+    //            Debug.LogWarning("[제작 실패] 레시피 없음/매칭 실패");
+    //            // 소지 아이템 유지
+    //        }
+    //    }
+    //    else
+    //    {
+    //        Debug.LogWarning("[지연된 제작 실패] currentMaker가 null입니다");
+    //    }
+    //}
 
     public bool IsNearMaker()
     {
@@ -195,20 +256,17 @@ public class PlayerInteract : MonoBehaviour
             Debug.Log($"접근: {currentMaker.makerId}");
         }
 
-        if (other.CompareTag("Basket"))
-        {
-            nearbyBasket = other.GetComponent<BasketInventory>();
-        }
-
-        if (other.CompareTag("BasketSpot"))
-        {
-            currentBasketSpot = other.gameObject;
-        }
-
         if (other.CompareTag("StorageBox")) // 꼭 Tag 설정 필요
         {
             nearbyStorage = other.GetComponent<StorageInventory>();
         }
+
+        if (other.CompareTag("Table"))
+        {
+            nearbyTable = other.GetComponent<TableInfo>();
+            Debug.Log($"테이블 접근");
+        }
+            
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -221,22 +279,13 @@ public class PlayerInteract : MonoBehaviour
             Debug.Log($"이탈: {maker.makerId}");
         }
 
-        if (other.CompareTag("Basket"))
-        {
-            if (nearbyBasket == other.GetComponent<BasketInventory>())
-                nearbyBasket = null;
-        }
-
-        if (other.CompareTag("BasketSpot"))
-        {
-            if (currentBasketSpot == other.gameObject)
-                currentBasketSpot = null;
-        }
-
         if (other.CompareTag("StorageBox"))
         {
             if (nearbyStorage == other.GetComponent<StorageInventory>())
                 nearbyStorage = null;
         }
+
+        if (other.CompareTag("Table") && other.GetComponent<TableInfo>() == nearbyTable)
+            nearbyTable = null;
     }
 }

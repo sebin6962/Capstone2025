@@ -26,9 +26,10 @@ public class ScenePortal : MonoBehaviour
 
     private void Update()
     {
-        if (isInTrigger && (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S)))
+        if (isInTrigger && (Input.GetKeyDown(KeyCode.E)))
         {
             SceneTransitionInfo.Instance.entranceID = entranceID;
+            Debug.Log($"[Portal] Scene change to {targetScene}, entranceID set to {entranceID}");
             FadeManager.Instance.FadeToScene(targetScene, 0.5f);
         }
     }
